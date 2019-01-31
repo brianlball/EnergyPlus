@@ -93,10 +93,10 @@ namespace ExteriorEnergyUse {
     // Needed for unit tests, should not be normally called.
     void clear_state();
 
-    // get the current value of the state variables
-    void get_state();
-    // set the current value of the state variables
-    void set_state();
+    // get the current value of all the state variables
+    void get_states();
+    // set the current value of all the state variables
+    void set_states();
 
     // Name Public routines, optionally name Private routines within this module
 
