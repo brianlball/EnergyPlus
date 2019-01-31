@@ -144,6 +144,16 @@ namespace ExteriorEnergyUse {
         GetExteriorEnergyInputFlag = true;
     }
 
+    // get the current value of the state variables
+    void get_state()
+    {
+    }
+
+    // set the current value of the state variables
+    void set_state()
+    {
+    }
+
     void ManageExteriorEnergyUse()
     {
 

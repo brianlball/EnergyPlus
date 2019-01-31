@@ -460,7 +460,12 @@ void EnergyPlusFixture::clear_all_states()
     ResultsFramework::clear_state();
 }
 
-std::string EnergyPlusFixture::delimited_string(std::vector<std::string> const &strings, std::string const &delimiter)
+void EnergyPlusFixture::get_all_states()
+{
+    //stub out wrapper for getting all the current states
+}
+
+    std::string EnergyPlusFixture::delimited_string(std::vector<std::string> const &strings, std::string const &delimiter)
 {
     std::ostringstream compare_text;
     for (auto const &str : strings) {

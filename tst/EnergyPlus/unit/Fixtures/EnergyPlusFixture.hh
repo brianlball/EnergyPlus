@@ -113,6 +113,8 @@ protected:
 
     void clear_all_states();
 
+    void get_all_states();
+
     // This will output the "Begin Test" ShowMessage for every unit test that uses or inherits from this fixture.
     // Now this does not need to be manually entered for every unit test as well as it will automatically be updated as the
     // unit test names change.
