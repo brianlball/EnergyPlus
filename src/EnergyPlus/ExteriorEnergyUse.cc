@@ -144,14 +144,61 @@ namespace ExteriorEnergyUse {
         GetExteriorEnergyInputFlag = true;
     }
 
-    // get the current value of all the state variables
-    void get_states()
+    // load the current value of all the state variables
+    void load_states()
     {
+        //get saved json from master json
+
+        //set these local values from json
+        json root = {
+         // ExteriorLightUsage     
+            {"SchedPtr", ExteriorLightUsage().SchedPtr},
+            {"DesignLevel", ExteriorLightUsage().DesignLevel},
+            {"Power", ExteriorLightUsage().Power},
+            {"CurrentUse", ExteriorLightUsage().CurrentUse},
+            {"ControlMode", ExteriorLightUsage().ControlMode},
+            {"ManageDemand", ExteriorLightUsage().ManageDemand},
+            {"DemandLimit", ExteriorLightUsage().DemandLimit},
+            {"PowerActuatorOn", ExteriorLightUsage().PowerActuatorOn}, 
+            {"SumConsumption", ExteriorLightUsage().SumConsumption}, 
+            {"SumTimeNotZeroCons", ExteriorLightUsage().SumTimeNotZeroCons},
+         // ExteriorEquipmentUsage
+            {"FuelType", ExteriorEquipmentUsage().FuelType},
+            {"SchedPtr", ExteriorEquipmentUsage().SchedPtr},
+            {"DesignLevel", ExteriorEquipmentUsage().DesignLevel},
+            {"Power", ExteriorEquipmentUsage().Power},
+            {"CurrentUse", ExteriorEquipmentUsage().CurrentUse},
+            {"ManageDemand", ExteriorEquipmentUsage().ManageDemand},
+            {"DemandLimit", ExteriorEquipmentUsage().DemandLimit}
+        };
     }
 
-    // set the current value of all the state variables
-    void set_states()
+    // save the current value of all the state variables
+    void save_states()
     {
+        //setup json to save
+        json root = {
+            // ExteriorLightUsage
+            {"SchedPtr", ExteriorLightUsage().SchedPtr},
+            {"DesignLevel", ExteriorLightUsage().DesignLevel},
+            {"Power", ExteriorLightUsage().Power},
+            {"CurrentUse", ExteriorLightUsage().CurrentUse},
+            {"ControlMode", ExteriorLightUsage().ControlMode},
+            {"ManageDemand", ExteriorLightUsage().ManageDemand},
+            {"DemandLimit", ExteriorLightUsage().DemandLimit},
+            {"PowerActuatorOn", ExteriorLightUsage().PowerActuatorOn},
+            {"SumConsumption", ExteriorLightUsage().SumConsumption},
+            {"SumTimeNotZeroCons", ExteriorLightUsage().SumTimeNotZeroCons},
+            // ExteriorEquipmentUsage
+            {"FuelType", ExteriorEquipmentUsage().FuelType},
+            {"SchedPtr", ExteriorEquipmentUsage().SchedPtr},
+            {"DesignLevel", ExteriorEquipmentUsage().DesignLevel},
+            {"Power", ExteriorEquipmentUsage().Power},
+            {"CurrentUse", ExteriorEquipmentUsage().CurrentUse},
+            {"ManageDemand", ExteriorEquipmentUsage().ManageDemand},
+            {"DemandLimit", ExteriorEquipmentUsage().DemandLimit}};
+
+        //save json or pass json to master json
     }
 
     void ManageExteriorEnergyUse()

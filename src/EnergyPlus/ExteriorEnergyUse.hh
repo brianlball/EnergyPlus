@@ -51,6 +51,8 @@
 // ObjexxFCL Headers
 #include <ObjexxFCL/Array1D.hh>
 
+#include <nlohmann/json.hpp>
+
 // EnergyPlus Headers
 #include <DataGlobals.hh>
 #include <EnergyPlus.hh>
@@ -93,10 +95,12 @@ namespace ExteriorEnergyUse {
     // Needed for unit tests, should not be normally called.
     void clear_state();
 
-    // get the current value of all the state variables
-    void get_states();
-    // set the current value of all the state variables
-    void set_states();
+    //json format for states
+    using json = nlohmann::json;
+    // save the current value of all the state variables
+    void save_states();
+    // load the current value of all the state variables
+    void load_states();
 
     // Name Public routines, optionally name Private routines within this module
 

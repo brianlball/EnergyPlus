@@ -460,12 +460,18 @@ void EnergyPlusFixture::clear_all_states()
     ResultsFramework::clear_state();
 }
 
-void EnergyPlusFixture::get_all_states()
+void EnergyPlusFixture::load_all_states()
 {
     //stub out wrapper for getting all the current states
+    ExteriorEnergyUse::load_states();
 }
 
-    std::string EnergyPlusFixture::delimited_string(std::vector<std::string> const &strings, std::string const &delimiter)
+void EnergyPlusFixture::save_all_states()
+{
+    // stub out wrapper for getting all the current states
+    ExteriorEnergyUse::save_states();
+}
+std::string EnergyPlusFixture::delimited_string(std::vector<std::string> const &strings, std::string const &delimiter)
 {
     std::ostringstream compare_text;
     for (auto const &str : strings) {
