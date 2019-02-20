@@ -1,69 +1,21 @@
-! ExteriorLightsAndEq.idf
-! Basic file description:  No Building. Minimal Configuration.
+! Minimal.idf
+! Basic file description: This is a minimal configuration necessary to run.
+! Highlights: Illustrates minimal items necessary to perform run.
+! BUILDING, SURFACEGEOMETRY, LOCATION and DESIGNDAY (or RUNPERIOD) are the absolute minimal required input objects.
+! TIME STEP IN HOUR is included so as to not get warning error.
+! Including two design days, Run Control object and RunPeriod to facilitate use.
+! Although not incredibly useful, this could be used as a weather/solar calculator.
+! Simulation Location/Run: Denver is included.  Any could be used.
+! Building: None.
 !
-! Highlights:              Example of exterior equipment and lights.
+! Internal gains description: None.
 !
-! Simulation Location/Run: DENVER_STAPLETON_CO_USA_WMO_724690, 2 design days, 1 run period,
-!                          Run Control executes two design days and weather file.
-!                          Applicable to any location.
+! HVAC: None.
 !
-! Simulation Location/Run: Denver Stapleton Intl Arpt CO USA WMO=724690, 2 design days, 1 run period,
-!                          Run Control executes two design days (see RUN PERIOD object)
-!
-! Location:                Denver, CO
-!
-! Design Days:             Denver Stapleton Intl Arpt CO USA Annual Heating 99%, MaxDB=-16°C
-!                          Denver Stapleton Intl Arpt CO USA Annual Cooling (DB=>MWB) 1%, MaxDB=32.6°C MWB=15.6°C
-!
-! Run Period (Weather File): Full Annual Simulation, DENVER_STAPLETON_CO_USA_WMO_724690
-!
-! Run Control:             No zone or system sizing, run control does design days and weather file simulation
-!
-! Building: No building.
-!
-! Internal gains description:     None
-!
-! Interzone Surfaces:             None
-! Internal Mass:                  None
-! People:                         None
-! Lights(Exterior only):          Exterior Lights and Equipment, always "on".
-!                                 Lights configured in two ways: by schedule and by astronomical clock.
-! Exterior Equipment              Lights (2000W), Fuel (1 of each kind, NaturalGas, FuelOil#1, FuelOil#2, Coal,
-!                                                 LPG, Water, always "on", 1000 units).
-!                                 Also Water Eq 10000 units, always "on"
-! Windows:                        None
-!
-! Doors:                          None
-!
-! Detached Shading:               None
-! Daylight:                       None
-! Natural Ventilation:            None
-! Compact Schedules:              Yes
-! Solar Distribution:             NA (MinimalShadowing)
-!
-! HVAC:                           None
-!
-! Zonal Equipment:                None
-! Central Air Handling Equipment: None
-! System Equipment Autosize:      None
-! Purchased Cooling:              None
-! Purchased Heating:              None
-! Coils:                          None
-! Pumps:                          None
-! Boilers:                        None
-! Chillers:                       None
-!
-! Results:
-! Standard Reports:               None
-! Timestep or Hourly Variables:   TimeStep, Monthly and RunPeriod
-! Time bins Report:               None
-! HTML Report:                    None
-! Environmental Emissions:        None
-! Utility Tariffs:                None
 
   Version,9.0;
 
-  Timestep,2;
+  Timestep,4;
 
   Building,
     None,                    !- Name
@@ -71,44 +23,46 @@
     Suburbs,                 !- Terrain
     0.04,                    !- Loads Convergence Tolerance Value
     0.40,                    !- Temperature Convergence Tolerance Value {deltaC}
-    MinimalShadowing,        !- Solar Distribution
-    25,                      !- Maximum Number of Warmup Days
+    FullInteriorAndExterior, !- Solar Distribution
+    7,                      !- Maximum Number of Warmup Days
     6;                       !- Minimum Number of Warmup Days
 
+  StopSimulation,
+    RUNPERIOD 1,             !- Envoironment to Stop
+    2,                      !- Stop Day
+    10,                      !- Stop Hour
+    3;                     !- Stop Time
+	
+  Output:JSON,
+    TimeSeriesAndTabular;
+	
   GlobalGeometryRules,
     UpperLeftCorner,         !- Starting Vertex Position
     CounterClockWise,        !- Vertex Entry Direction
     World;                   !- Coordinate System
 
-  SimulationControl,
-    No,                      !- Do Zone Sizing Calculation
-    No,                      !- Do System Sizing Calculation
-    No,                      !- Do Plant Sizing Calculation
-    Yes,                     !- Run Simulation for Sizing Periods
-    Yes;                     !- Run Simulation for Weather File Run Periods
-
   Site:Location,
-    Denver Stapleton Intl Arpt CO USA WMO=724690,  !- Name
+    DENVER_STAPLETON_CO_USA_WMO_724690,  !- Name
     39.77,                   !- Latitude {deg}
     -104.87,                 !- Longitude {deg}
     -7.00,                   !- Time Zone {hr}
     1611.00;                 !- Elevation {m}
 
- ! Denver Stapleton Intl Arpt CO USA Annual Heating Design Conditions Wind Speed=2.3m/s Wind Dir=180
+ ! DENVER_STAPLETON_CO_USA Annual Heating Design Conditions Wind Speed=2.3m/s Wind Dir=180
  ! Coldest Month=December
- ! Denver Stapleton Intl Arpt CO USA Annual Heating 99%, MaxDB=-16°C
+ ! DENVER_STAPLETON_CO_USA Annual Heating 99.6%, MaxDB=-20°C
 
   SizingPeriod:DesignDay,
-    Denver Stapleton Intl Arpt Ann Htg 99% Condns DB,  !- Name
+    DENVER_STAPLETON Ann Htg 99.6% Condns DB,  !- Name
     12,                      !- Month
     21,                      !- Day of Month
     WinterDesignDay,         !- Day Type
-    -16,                     !- Maximum Dry-Bulb Temperature {C}
+    -20,                     !- Maximum Dry-Bulb Temperature {C}
     0.0,                     !- Daily Dry-Bulb Temperature Range {deltaC}
     ,                        !- Dry-Bulb Temperature Range Modifier Type
     ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
     Wetbulb,                 !- Humidity Condition Type
-    -16,                     !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    -20,                     !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
     ,                        !- Humidity Condition Day Schedule Name
     ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
     ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
@@ -126,21 +80,21 @@
     ,                        !- ASHRAE Clear Sky Optical Depth for Diffuse Irradiance (taud) {dimensionless}
     0.00;                    !- Sky Clearness
 
- ! Denver Stapleton Intl Arpt Annual Cooling Design Conditions Wind Speed=4m/s Wind Dir=120
+ ! DENVER_STAPLETON Annual Cooling Design Conditions Wind Speed=4m/s Wind Dir=120
  ! Hottest Month=July
- ! Denver Stapleton Intl Arpt CO USA Annual Cooling (DB=>MWB) 1%, MaxDB=32.6°C MWB=15.6°C
+ ! DENVER_STAPLETON_CO_USA Annual Cooling (DB=>MWB) .4%, MaxDB=34.1°C MWB=15.8°C
 
   SizingPeriod:DesignDay,
-    Denver Stapleton Intl Arpt Ann Clg 1% Condns DB=>MWB,  !- Name
+    DENVER_STAPLETON Ann Clg .4% Condns DB=>MWB,  !- Name
     7,                       !- Month
     21,                      !- Day of Month
     SummerDesignDay,         !- Day Type
-    32.6,                    !- Maximum Dry-Bulb Temperature {C}
+    34.1,                    !- Maximum Dry-Bulb Temperature {C}
     15.2,                    !- Daily Dry-Bulb Temperature Range {deltaC}
     ,                        !- Dry-Bulb Temperature Range Modifier Type
     ,                        !- Dry-Bulb Temperature Range Modifier Day Schedule Name
     Wetbulb,                 !- Humidity Condition Type
-    15.6,                    !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
+    15.8,                    !- Wetbulb or DewPoint at Maximum Dry-Bulb {C}
     ,                        !- Humidity Condition Day Schedule Name
     ,                        !- Humidity Ratio at Maximum Dry-Bulb {kgWater/kgDryAir}
     ,                        !- Enthalpy at Maximum Dry-Bulb {J/kg}
@@ -163,8 +117,8 @@
     1,                       !- Begin Month
     1,                       !- Begin Day of Month
     ,                        !- Begin Year
-    1,                      !- End Month
-    2,                      !- End Day of Month
+    12,                      !- End Month
+    31,                      !- End Day of Month
     ,                        !- End Year
     Tuesday,                 !- Day of Week for Start Day
     Yes,                     !- Use Weather File Holidays and Special Days
@@ -173,104 +127,28 @@
     Yes,                     !- Use Weather File Rain Indicators
     Yes;                     !- Use Weather File Snow Indicators
 
-  ScheduleTypeLimits,
-    On/Off,                  !- Name
-    0,                       !- Lower Limit Value
-    1,                       !- Upper Limit Value
-    DISCRETE;                !- Numeric Type
-
-  Schedule:Compact,
-    ON,                      !- Name
-    On/Off,                  !- Schedule Type Limits Name
-    Through: 12/31,          !- Field 1
-    For: AllDays,            !- Field 2
-    Until: 24:00,1.0;        !- Field 3
-
-  Exterior:Lights,
-    OutsideLightsSchedule,   !- Name
-    ON,                      !- Schedule Name
-    1000,                    !- Design Level {W}
-    ScheduleNameOnly;        !- Control Option
-
-  Exterior:Lights,
-    OutsideLightsDuskToDawn, !- Name
-    ON,                      !- Schedule Name
-    1000,                    !- Design Level {W}
-    AstronomicalClock;       !- Control Option
-
-  Exterior:FuelEquipment,
-    OutsideGasEq,            !- Name
-    NaturalGas,              !- Fuel Use Type
-    ON,                      !- Schedule Name
-    1000;                    !- Design Level {W}
-
-  Exterior:FuelEquipment,
-    OutsideCoalEq,           !- Name
-    Coal,                    !- Fuel Use Type
-    ON,                      !- Schedule Name
-    1000;                    !- Design Level {W}
-
-  Exterior:FuelEquipment,
-    OutsideFuelOil1Eq,       !- Name
-    FuelOil#1,               !- Fuel Use Type
-    ON,                      !- Schedule Name
-    1000;                    !- Design Level {W}
-
-  Exterior:FuelEquipment,
-    OutsideFuelOil2Eq,       !- Name
-    FuelOil#2,               !- Fuel Use Type
-    ON,                      !- Schedule Name
-    1000;                    !- Design Level {W}
-
-  Exterior:FuelEquipment,
-    OutsideLPGEq,            !- Name
-    PropaneGas,              !- Fuel Use Type
-    ON,                      !- Schedule Name
-    1000;                    !- Design Level {W}
-
-  Exterior:FuelEquipment,
-    OutsideWater1Eq,         !- Name
-    Water,                   !- Fuel Use Type
-    ON,                      !- Schedule Name
-    1000;                    !- Design Level {W}
-
-  Exterior:WaterEquipment,
-    OutsideWaterEq,          !- Name
-    Water,                   !- Fuel Use Type
-    ON,                      !- Schedule Name
-    10000;                   !- Design Level {m3/s}
-
-  Output:Variable,*,Exterior Lights Electric Energy,timestep;
-
-  Output:Variable,*,Exterior Equipment Gas Energy,timestep;
-
-  Output:Variable,*,Exterior Equipment Coal Energy,timestep;
-
-  Output:Variable,*,Exterior Equipment FuelOil#1 Energy,timestep;
-
-  Output:Variable,*,Exterior Equipment FuelOil#2 Energy,timestep;
-
-  Output:Variable,*,Exterior Equipment Propane Energy,timestep;
-
-  Output:Variable,*,Exterior Equipment Water Volume,timestep;
-
-  Output:Meter,Electricity:*,Monthly;
-
-  Output:Meter:Cumulative,Electricity:*,Monthly;
-
-  Output:Meter,Electricity:*,Environment;
-
-  Output:Meter,ExteriorEquipment*,Environment;
-
-  Output:Meter:MeterFileOnly,Gas:Facility,runperiod;
+  SimulationControl,
+    No,                      !- Do Zone Sizing Calculation
+    No,                      !- Do System Sizing Calculation
+    No,                      !- Do Plant Sizing Calculation
+    Yes,                     !- Run Simulation for Sizing Periods
+    Yes;                      !- Run Simulation for Weather File Run Periods
 
   Output:VariableDictionary,Regular;
 
   Output:Variable,*,Site Outdoor Air Drybulb Temperature,Timestep;
 
+  Output:Variable,*,Site Outdoor Air Wetbulb Temperature,Timestep;
+
+  Output:Variable,*,Site Outdoor Air Dewpoint Temperature,Timestep;
+
+  Output:Variable,*,Site Solar Azimuth Angle,Timestep;
+
   Output:Variable,*,Site Solar Altitude Angle,Timestep;
 
-  Output:Variable,ON,Schedule Value,Daily;
+  Output:Variable,*,Site Direct Solar Radiation Rate per Area,Timestep;
+
+  Output:Variable,*,Site Diffuse Solar Radiation Rate per Area,Timestep;
 
   OutputControl:Table:Style,
     HTML;                    !- Column Separator

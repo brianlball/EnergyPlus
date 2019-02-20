@@ -471,6 +471,45 @@ namespace SimulationManager {
         EnvCount = 0;
         WarmupFlag = true;
 
+        //get stop simulation values -blb
+        //need these variables
+        // SUBROUTINE LOCAL VARIABLE DECLARATIONS:
+        Array1D_string Alphas(6);
+        Array1D<Real64> Number(4);
+        int NumAlpha;
+        int NumNumber;
+        int IOStat;
+        int NumDebugOut;
+        int MinInt;
+        int Num;
+        using namespace DataIPShortCuts;
+        std::string StopEnv("");
+        int StopDay(9999);
+        int StopHour(9999);
+        int StopTime(9999);
+        //look for StopSimulation object in idf
+        CurrentModuleObject = "StopSimulation";
+        int num = inputProcessor->getNumObjectsFound(CurrentModuleObject);
+        if (num == 1) {
+            inputProcessor->getObjectItem(CurrentModuleObject,
+                                          1,
+                                          Alphas,
+                                          NumAlpha,
+                                          Number,
+                                          NumNumber,
+                                          IOStat,
+                                          lNumericFieldBlanks,
+                                          lAlphaFieldBlanks,
+                                          cAlphaFieldNames,
+                                          cNumericFieldNames);
+            StopEnv = Alphas(1);
+            StopDay = Number(1);
+            StopHour = Number(2);
+            StopTime = Number(3);
+            DisplayString("Will Stop Simuation at day: " + std::to_string(StopDay) + " hour: " + std::to_string(StopHour) +
+                          " time: " + std::to_string(StopTime) + " during: " + StopEnv);
+        }
+
         while (Available) {
 
             GetNextEnvironment(Available, ErrorsFound);
@@ -510,12 +549,6 @@ namespace SimulationManager {
 
             bool anyEMSRan;
             ManageEMS(emsCallFromBeginNewEvironment, anyEMSRan); // calling point
-
-            // setup temp vars for stop testing -blb
-            int StopDay(1);
-            int StopHour(10);
-            int StopTime(2);
-            std::string StopEnv("RUNPERIOD 1");
 
             while ((DayOfSim < NumOfDayInEnvrn) || (WarmupFlag)) { // Begin day loop ...
 
