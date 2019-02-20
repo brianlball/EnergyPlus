@@ -124,8 +124,8 @@ extern "C" {
 #include <PollutionModule.hh>
 #include <Psychrometrics.hh>
 #include <RefrigeratedCase.hh>
-#include <ResultsSchema.hh>
 #include <ReportCoilSelection.hh>
+#include <ResultsSchema.hh>
 #include <ScheduleManager.hh>
 #include <SetPointManager.hh>
 #include <SimulationManager.hh>
@@ -511,6 +511,12 @@ namespace SimulationManager {
             bool anyEMSRan;
             ManageEMS(emsCallFromBeginNewEvironment, anyEMSRan); // calling point
 
+            // setup temp vars for stop testing -blb
+            int StopDay(1);
+            int StopHour(10);
+            int StopTime(2);
+            std::string StopEnv("RUNPERIOD 1");
+
             while ((DayOfSim < NumOfDayInEnvrn) || (WarmupFlag)) { // Begin day loop ...
 
                 if (sqlite) sqlite->sqliteBegin(); // setup for one transaction per day
@@ -559,6 +565,24 @@ namespace SimulationManager {
                     EndHourFlag = false;
 
                     for (TimeStep = 1; TimeStep <= NumOfTimeStepInHour; ++TimeStep) {
+                        //check for stop conditions -blb
+                        if ((EnvironmentName == StopEnv) && (!WarmupFlag) && (DayOfSim == StopDay) && (HourOfDay == StopHour) && (TimeStep == StopTime)) {
+                            DisplayString("Stopping Simuation at day: " + std::to_string(DayOfSim) + " hour: " + std::to_string(HourOfDay) +
+                                          " time: " + std::to_string(TimeStep) + " during: " + StopEnv);
+                            // TODO write out states somewhere, somehow
+                            return;
+                            /*
+                            //set counters to end values
+                            DayOfSim = NumOfDayInEnvrn;
+                            HourOfDay = 24;
+                            TimeStep = NumOfTimeStepInHour;
+                            EndHourFlag = true;
+                            EndDayFlag = true;
+                            EndEnvrnFlag = true;
+                            //TODO write out states somewhere, somehow
+                            break;
+                            */
+                        }
                         if (AnySlabsInModel || AnyBasementsInModel) {
                             SimulateGroundDomains(false);
                         }
@@ -1426,15 +1450,16 @@ namespace SimulationManager {
             if (ResultsFramework::OutputSchema->RIDetailedZoneTSData.rDataFrameEnabled() ||
                 ResultsFramework::OutputSchema->RIDetailedZoneTSData.iDataFrameEnabled()) {
                 if (ResultsFramework::OutputSchema->JSONEnabled()) {
-                    OpenStreamFile(DataStringGlobals::outputTSZoneJsonFileName, jsonOutputStreams.OutputFileTSZoneJson,
-                                   jsonOutputStreams.json_TSstream_Zone);
+                    OpenStreamFile(
+                        DataStringGlobals::outputTSZoneJsonFileName, jsonOutputStreams.OutputFileTSZoneJson, jsonOutputStreams.json_TSstream_Zone);
                 }
                 if (ResultsFramework::OutputSchema->CBOREnabled()) {
-                    OpenStreamFile(DataStringGlobals::outputTSZoneCborFileName, jsonOutputStreams.OutputFileTSZoneCBOR,
-                                   jsonOutputStreams.cbor_TSstream_Zone);
+                    OpenStreamFile(
+                        DataStringGlobals::outputTSZoneCborFileName, jsonOutputStreams.OutputFileTSZoneCBOR, jsonOutputStreams.cbor_TSstream_Zone);
                 }
                 if (ResultsFramework::OutputSchema->MsgPackEnabled()) {
-                    OpenStreamFile(DataStringGlobals::outputTSZoneMsgPackFileName, jsonOutputStreams.OutputFileTSZoneMsgPack,
+                    OpenStreamFile(DataStringGlobals::outputTSZoneMsgPackFileName,
+                                   jsonOutputStreams.OutputFileTSZoneMsgPack,
                                    jsonOutputStreams.msgpack_TSstream_Zone);
                 }
             }
@@ -1443,15 +1468,16 @@ namespace SimulationManager {
             if (ResultsFramework::OutputSchema->RIDetailedHVACTSData.iDataFrameEnabled() ||
                 ResultsFramework::OutputSchema->RIDetailedHVACTSData.rDataFrameEnabled()) {
                 if (ResultsFramework::OutputSchema->JSONEnabled()) {
-                    OpenStreamFile(DataStringGlobals::outputTSHvacJsonFileName, jsonOutputStreams.OutputFileTSHVACJson,
-                                   jsonOutputStreams.json_TSstream_HVAC);
+                    OpenStreamFile(
+                        DataStringGlobals::outputTSHvacJsonFileName, jsonOutputStreams.OutputFileTSHVACJson, jsonOutputStreams.json_TSstream_HVAC);
                 }
                 if (ResultsFramework::OutputSchema->CBOREnabled()) {
-                    OpenStreamFile(DataStringGlobals::outputTSHvacCborFileName, jsonOutputStreams.OutputFileTSHVACCBOR,
-                                   jsonOutputStreams.cbor_TSstream_HVAC);
+                    OpenStreamFile(
+                        DataStringGlobals::outputTSHvacCborFileName, jsonOutputStreams.OutputFileTSHVACCBOR, jsonOutputStreams.cbor_TSstream_HVAC);
                 }
                 if (ResultsFramework::OutputSchema->MsgPackEnabled()) {
-                    OpenStreamFile(DataStringGlobals::outputTSHvacMsgPackFileName, jsonOutputStreams.OutputFileTSHVACMsgPack,
+                    OpenStreamFile(DataStringGlobals::outputTSHvacMsgPackFileName,
+                                   jsonOutputStreams.OutputFileTSHVACMsgPack,
                                    jsonOutputStreams.msgpack_TSstream_HVAC);
                 }
             }
@@ -1466,8 +1492,8 @@ namespace SimulationManager {
                     OpenStreamFile(DataStringGlobals::outputTSCborFileName, jsonOutputStreams.OutputFileTSCBOR, jsonOutputStreams.cbor_TSstream);
                 }
                 if (ResultsFramework::OutputSchema->MsgPackEnabled()) {
-                    OpenStreamFile(DataStringGlobals::outputTSMsgPackFileName, jsonOutputStreams.OutputFileTSMsgPack,
-                                   jsonOutputStreams.msgpack_TSstream);
+                    OpenStreamFile(
+                        DataStringGlobals::outputTSMsgPackFileName, jsonOutputStreams.OutputFileTSMsgPack, jsonOutputStreams.msgpack_TSstream);
                 }
             }
 
@@ -1481,8 +1507,8 @@ namespace SimulationManager {
                     OpenStreamFile(DataStringGlobals::outputHRCborFileName, jsonOutputStreams.OutputFileHRCBOR, jsonOutputStreams.cbor_HRstream);
                 }
                 if (ResultsFramework::OutputSchema->MsgPackEnabled()) {
-                    OpenStreamFile(DataStringGlobals::outputHRMsgPackFileName, jsonOutputStreams.OutputFileHRMsgPack,
-                                   jsonOutputStreams.msgpack_HRstream);
+                    OpenStreamFile(
+                        DataStringGlobals::outputHRMsgPackFileName, jsonOutputStreams.OutputFileHRMsgPack, jsonOutputStreams.msgpack_HRstream);
                 }
             }
 
@@ -1496,8 +1522,8 @@ namespace SimulationManager {
                     OpenStreamFile(DataStringGlobals::outputDYCborFileName, jsonOutputStreams.OutputFileDYCBOR, jsonOutputStreams.cbor_DYstream);
                 }
                 if (ResultsFramework::OutputSchema->MsgPackEnabled()) {
-                    OpenStreamFile(DataStringGlobals::outputDYMsgPackFileName, jsonOutputStreams.OutputFileDYMsgPack,
-                                   jsonOutputStreams.msgpack_DYstream);
+                    OpenStreamFile(
+                        DataStringGlobals::outputDYMsgPackFileName, jsonOutputStreams.OutputFileDYMsgPack, jsonOutputStreams.msgpack_DYstream);
                 }
             }
 
@@ -1511,8 +1537,8 @@ namespace SimulationManager {
                     OpenStreamFile(DataStringGlobals::outputMNCborFileName, jsonOutputStreams.OutputFileMNCBOR, jsonOutputStreams.cbor_MNstream);
                 }
                 if (ResultsFramework::OutputSchema->MsgPackEnabled()) {
-                    OpenStreamFile(DataStringGlobals::outputMNMsgPackFileName, jsonOutputStreams.OutputFileMNMsgPack,
-                                   jsonOutputStreams.msgpack_MNstream);
+                    OpenStreamFile(
+                        DataStringGlobals::outputMNMsgPackFileName, jsonOutputStreams.OutputFileMNMsgPack, jsonOutputStreams.msgpack_MNstream);
                 }
             }
 
@@ -1526,8 +1552,8 @@ namespace SimulationManager {
                     OpenStreamFile(DataStringGlobals::outputSMCborFileName, jsonOutputStreams.OutputFileSMCBOR, jsonOutputStreams.cbor_SMstream);
                 }
                 if (ResultsFramework::OutputSchema->MsgPackEnabled()) {
-                    OpenStreamFile(DataStringGlobals::outputSMMsgPackFileName, jsonOutputStreams.OutputFileSMMsgPack,
-                                   jsonOutputStreams.msgpack_SMstream);
+                    OpenStreamFile(
+                        DataStringGlobals::outputSMMsgPackFileName, jsonOutputStreams.OutputFileSMMsgPack, jsonOutputStreams.msgpack_SMstream);
                 }
             }
         }
@@ -2287,9 +2313,9 @@ namespace SimulationManager {
                         {
                             IOFlags flags;
                             flags.ADVANCE("No");
-                            gio::write(OutputFileBNDetails, Format_713, flags)
-                                << "     Plant Loop Connector Branches," + stripped(ChrOut) + ",Splitter," +
-                                       PlantLoop(Count).LoopSide(LoopSideNum).Splitter.Name + ',';
+                            gio::write(OutputFileBNDetails, Format_713, flags) << "     Plant Loop Connector Branches," + stripped(ChrOut) +
+                                                                                      ",Splitter," +
+                                                                                      PlantLoop(Count).LoopSide(LoopSideNum).Splitter.Name + ',';
                         }
                         if (ChrOut2 != errstring) {
                             {
@@ -2319,12 +2345,11 @@ namespace SimulationManager {
                         } else {
                             gio::write(OutputFileBNDetails, Format_713) << ChrOut3 + ',' + PlantLoop(Count).Name + ',' + LoopString;
                         }
-                        gio::write(OutputFileBNDetails, Format_713)
-                            << "     Plant Loop Connector Nodes,   " + stripped(ChrOut) + ",Splitter," +
-                                   PlantLoop(Count).LoopSide(LoopSideNum).Splitter.Name + ',' +
-                                   PlantLoop(Count).LoopSide(LoopSideNum).Splitter.NodeNameIn + ',' +
-                                   PlantLoop(Count).LoopSide(LoopSideNum).Splitter.NodeNameOut(Count1) + ',' + PlantLoop(Count).Name + ',' +
-                                   LoopString;
+                        gio::write(OutputFileBNDetails, Format_713) << "     Plant Loop Connector Nodes,   " + stripped(ChrOut) + ",Splitter," +
+                                                                           PlantLoop(Count).LoopSide(LoopSideNum).Splitter.Name + ',' +
+                                                                           PlantLoop(Count).LoopSide(LoopSideNum).Splitter.NodeNameIn + ',' +
+                                                                           PlantLoop(Count).LoopSide(LoopSideNum).Splitter.NodeNameOut(Count1) + ',' +
+                                                                           PlantLoop(Count).Name + ',' + LoopString;
                     }
                 }
 
@@ -2332,8 +2357,8 @@ namespace SimulationManager {
                 if (PlantLoop(Count).LoopSide(LoopSideNum).MixerExists) {
                     gio::write(ChrOut, fmtLD) << PlantLoop(Count).LoopSide(LoopSideNum).Mixer.TotalInletNodes;
                     gio::write(OutputFileBNDetails, Format_713)
-                        << "   Plant Loop Connector,Mixer," + PlantLoop(Count).LoopSide(LoopSideNum).Mixer.Name + ',' +
-                               PlantLoop(Count).Name + ',' + LoopString + ',' + stripped(ChrOut); //',Supply,'//  &
+                        << "   Plant Loop Connector,Mixer," + PlantLoop(Count).LoopSide(LoopSideNum).Mixer.Name + ',' + PlantLoop(Count).Name + ',' +
+                               LoopString + ',' + stripped(ChrOut); //',Supply,'//  &
                     for (Count1 = 1; Count1 <= PlantLoop(Count).LoopSide(LoopSideNum).Mixer.TotalInletNodes; ++Count1) {
                         gio::write(ChrOut, fmtLD) << Count1;
                         ChrOut2 = BlankString;
@@ -2347,9 +2372,9 @@ namespace SimulationManager {
                         {
                             IOFlags flags;
                             flags.ADVANCE("No");
-                            gio::write(OutputFileBNDetails, Format_713, flags)
-                                << "     Plant Loop Connector Branches," + stripped(ChrOut) + ",Mixer," +
-                                       PlantLoop(Count).LoopSide(LoopSideNum).Mixer.Name + ',';
+                            gio::write(OutputFileBNDetails, Format_713, flags) << "     Plant Loop Connector Branches," + stripped(ChrOut) +
+                                                                                      ",Mixer," + PlantLoop(Count).LoopSide(LoopSideNum).Mixer.Name +
+                                                                                      ',';
                         }
                         if (ChrOut2 != errstring) {
                             {
@@ -2371,19 +2396,16 @@ namespace SimulationManager {
                         }
                         if (ChrOut3 != errstring) {
                             gio::write(OutputFileBNDetails, Format_713)
-                                << PlantLoop(Count)
-                                           .LoopSide(LoopSideNum)
-                                           .Branch(PlantLoop(Count).LoopSide(LoopSideNum).Mixer.BranchNumOut)
-                                           .Name +
+                                << PlantLoop(Count).LoopSide(LoopSideNum).Branch(PlantLoop(Count).LoopSide(LoopSideNum).Mixer.BranchNumOut).Name +
                                        ',' + PlantLoop(Count).Name + ',' + LoopString;
                         } else {
                             gio::write(OutputFileBNDetails, Format_713) << ChrOut3 + ',' + PlantLoop(Count).Name + ",Supply";
                         }
                         gio::write(OutputFileBNDetails, Format_713) << "     Plant Loop Connector Nodes,   " + stripped(ChrOut) + ",Mixer," +
                                                                            PlantLoop(Count).LoopSide(LoopSideNum).Mixer.Name + ',' +
-                                                                           PlantLoop(Count).LoopSide(LoopSideNum).Mixer.NodeNameIn(Count1) +
-                                                                           ',' + PlantLoop(Count).LoopSide(LoopSideNum).Mixer.NodeNameOut +
-                                                                           ',' + PlantLoop(Count).Name + ',' + LoopString;
+                                                                           PlantLoop(Count).LoopSide(LoopSideNum).Mixer.NodeNameIn(Count1) + ',' +
+                                                                           PlantLoop(Count).LoopSide(LoopSideNum).Mixer.NodeNameOut + ',' +
+                                                                           PlantLoop(Count).Name + ',' + LoopString;
                     }
                 }
             }
@@ -2448,9 +2470,9 @@ namespace SimulationManager {
                         {
                             IOFlags flags;
                             flags.ADVANCE("No");
-                            gio::write(OutputFileBNDetails, Format_713, flags)
-                                << "     Plant Loop Connector Branches," + stripped(ChrOut) + ",Splitter," +
-                                       PlantLoop(Count).LoopSide(LoopSideNum).Splitter.Name + ',';
+                            gio::write(OutputFileBNDetails, Format_713, flags) << "     Plant Loop Connector Branches," + stripped(ChrOut) +
+                                                                                      ",Splitter," +
+                                                                                      PlantLoop(Count).LoopSide(LoopSideNum).Splitter.Name + ',';
                         }
                         if (ChrOut2 != errstring) {
                             {
@@ -2480,12 +2502,11 @@ namespace SimulationManager {
                         } else {
                             gio::write(OutputFileBNDetails, Format_713) << ChrOut3 + ',' + PlantLoop(Count).Name + ',' + LoopString;
                         }
-                        gio::write(OutputFileBNDetails, Format_713)
-                            << "     Plant Loop Connector Nodes,   " + stripped(ChrOut) + ",Splitter," +
-                                   PlantLoop(Count).LoopSide(LoopSideNum).Splitter.Name + ',' +
-                                   PlantLoop(Count).LoopSide(LoopSideNum).Splitter.NodeNameIn + ',' +
-                                   PlantLoop(Count).LoopSide(LoopSideNum).Splitter.NodeNameOut(Count1) + ',' + PlantLoop(Count).Name + ',' +
-                                   LoopString;
+                        gio::write(OutputFileBNDetails, Format_713) << "     Plant Loop Connector Nodes,   " + stripped(ChrOut) + ",Splitter," +
+                                                                           PlantLoop(Count).LoopSide(LoopSideNum).Splitter.Name + ',' +
+                                                                           PlantLoop(Count).LoopSide(LoopSideNum).Splitter.NodeNameIn + ',' +
+                                                                           PlantLoop(Count).LoopSide(LoopSideNum).Splitter.NodeNameOut(Count1) + ',' +
+                                                                           PlantLoop(Count).Name + ',' + LoopString;
                     }
                 }
 
@@ -2493,8 +2514,8 @@ namespace SimulationManager {
                 if (PlantLoop(Count).LoopSide(LoopSideNum).Mixer.Exists) {
                     gio::write(ChrOut, fmtLD) << PlantLoop(Count).LoopSide(LoopSideNum).Mixer.TotalInletNodes;
                     gio::write(OutputFileBNDetails, Format_713)
-                        << "   Plant Loop Connector,Mixer," + PlantLoop(Count).LoopSide(LoopSideNum).Mixer.Name + ',' +
-                               PlantLoop(Count).Name + ',' + LoopString + ',' + stripped(ChrOut); //',Supply,'//  &
+                        << "   Plant Loop Connector,Mixer," + PlantLoop(Count).LoopSide(LoopSideNum).Mixer.Name + ',' + PlantLoop(Count).Name + ',' +
+                               LoopString + ',' + stripped(ChrOut); //',Supply,'//  &
                     for (Count1 = 1; Count1 <= PlantLoop(Count).LoopSide(LoopSideNum).Mixer.TotalInletNodes; ++Count1) {
                         gio::write(ChrOut, fmtLD) << Count1;
                         ChrOut2 = BlankString;
@@ -2508,9 +2529,9 @@ namespace SimulationManager {
                         {
                             IOFlags flags;
                             flags.ADVANCE("No");
-                            gio::write(OutputFileBNDetails, Format_713, flags)
-                                << "     Plant Loop Connector Branches," + stripped(ChrOut) + ",Mixer," +
-                                       PlantLoop(Count).LoopSide(LoopSideNum).Mixer.Name + ',';
+                            gio::write(OutputFileBNDetails, Format_713, flags) << "     Plant Loop Connector Branches," + stripped(ChrOut) +
+                                                                                      ",Mixer," + PlantLoop(Count).LoopSide(LoopSideNum).Mixer.Name +
+                                                                                      ',';
                         }
                         if (ChrOut2 != errstring) {
                             {
@@ -2532,19 +2553,16 @@ namespace SimulationManager {
                         }
                         if (ChrOut3 != errstring) {
                             gio::write(OutputFileBNDetails, Format_713)
-                                << PlantLoop(Count)
-                                           .LoopSide(LoopSideNum)
-                                           .Branch(PlantLoop(Count).LoopSide(LoopSideNum).Mixer.BranchNumOut)
-                                           .Name +
+                                << PlantLoop(Count).LoopSide(LoopSideNum).Branch(PlantLoop(Count).LoopSide(LoopSideNum).Mixer.BranchNumOut).Name +
                                        ',' + PlantLoop(Count).Name + ',' + LoopString;
                         } else {
                             gio::write(OutputFileBNDetails, Format_713) << ChrOut3 + ',' + PlantLoop(Count).Name + ",Supply";
                         }
                         gio::write(OutputFileBNDetails, Format_713) << "     Plant Loop Connector Nodes,   " + stripped(ChrOut) + ",Mixer," +
                                                                            PlantLoop(Count).LoopSide(LoopSideNum).Mixer.Name + ',' +
-                                                                           PlantLoop(Count).LoopSide(LoopSideNum).Mixer.NodeNameIn(Count1) +
-                                                                           ',' + PlantLoop(Count).LoopSide(LoopSideNum).Mixer.NodeNameOut +
-                                                                           ',' + PlantLoop(Count).Name + ',' + LoopString;
+                                                                           PlantLoop(Count).LoopSide(LoopSideNum).Mixer.NodeNameIn(Count1) + ',' +
+                                                                           PlantLoop(Count).LoopSide(LoopSideNum).Mixer.NodeNameOut + ',' +
+                                                                           PlantLoop(Count).Name + ',' + LoopString;
                     }
                 }
             }
