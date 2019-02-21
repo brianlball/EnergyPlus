@@ -1,4 +1,4 @@
-! Minimal.idf
+! Minimal.idf + 1 exterior light
 ! Basic file description: This is a minimal configuration necessary to run.
 ! Highlights: Illustrates minimal items necessary to perform run.
 ! BUILDING, SURFACEGEOMETRY, LOCATION and DESIGNDAY (or RUNPERIOD) are the absolute minimal required input objects.
@@ -32,6 +32,31 @@
     2,                      !- Stop Day
     10,                      !- Stop Hour
     3;                     !- Stop Time
+
+  ScheduleTypeLimits,
+    On/Off,                  !- Name
+    0,                       !- Lower Limit Value
+    1,                       !- Upper Limit Value
+    DISCRETE;                !- Numeric Type
+
+  Schedule:Compact,
+    ON,                      !- Name
+    On/Off,                  !- Schedule Type Limits Name
+    Through: 12/31,          !- Field 1
+    For: AllDays,            !- Field 2
+    Until: 24:00,1.0;        !- Field 3
+
+  Exterior:Lights,
+    OutsideLightsSchedule,   !- Name
+    ON,                      !- Schedule Name
+    1000,                    !- Design Level {W}
+    ScheduleNameOnly;        !- Control Option
+	
+  Exterior:Lights,
+    OutsideLightsSchedule2,   !- Name
+    ON,                      !- Schedule Name
+    1000,                    !- Design Level {W}
+    ScheduleNameOnly;        !- Control Option
 	
   Output:JSON,
     TimeSeriesAndTabular;

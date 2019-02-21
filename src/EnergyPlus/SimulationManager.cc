@@ -471,8 +471,8 @@ namespace SimulationManager {
         EnvCount = 0;
         WarmupFlag = true;
 
-        //get stop simulation values -blb
-        //need these variables
+        // get stop simulation values -blb
+        // need these variables
         // SUBROUTINE LOCAL VARIABLE DECLARATIONS:
         Array1D_string Alphas(6);
         Array1D<Real64> Number(4);
@@ -487,7 +487,7 @@ namespace SimulationManager {
         int StopDay(9999);
         int StopHour(9999);
         int StopTime(9999);
-        //look for StopSimulation object in idf
+        // look for StopSimulation object in idf
         CurrentModuleObject = "StopSimulation";
         int num = inputProcessor->getNumObjectsFound(CurrentModuleObject);
         if (num == 1) {
@@ -598,23 +598,25 @@ namespace SimulationManager {
                     EndHourFlag = false;
 
                     for (TimeStep = 1; TimeStep <= NumOfTimeStepInHour; ++TimeStep) {
-                        //check for stop conditions -blb
-                        if ((EnvironmentName == StopEnv) && (!WarmupFlag) && (DayOfSim == StopDay) && (HourOfDay == StopHour) && (TimeStep == StopTime)) {
-                            DisplayString("Stopping Simuation at day: " + std::to_string(DayOfSim) + " hour: " + std::to_string(HourOfDay) +
+                        // check for stop conditions -blb
+                        if ((EnvironmentName == StopEnv) && (!WarmupFlag) && (DayOfSim == StopDay) && (HourOfDay == StopHour) &&
+                            (TimeStep == StopTime)) {
+                            DisplayString("Stopping Simulation at day: " + std::to_string(DayOfSim) + " hour: " + std::to_string(HourOfDay) +
                                           " time: " + std::to_string(TimeStep) + " during: " + StopEnv);
                             // TODO write out states somewhere, somehow
+                            save_all_states();
                             return;
-                            /*
-                            //set counters to end values
-                            DayOfSim = NumOfDayInEnvrn;
-                            HourOfDay = 24;
-                            TimeStep = NumOfTimeStepInHour;
-                            EndHourFlag = true;
-                            EndDayFlag = true;
-                            EndEnvrnFlag = true;
-                            //TODO write out states somewhere, somehow
-                            break;
-                            */
+                            
+                            // //set counters to end values to use the exisiting reporting functions
+                            //DayOfSim = NumOfDayInEnvrn;
+                            //HourOfDay = 24;
+                            //TimeStep = NumOfTimeStepInHour;
+                            //EndHourFlag = true;
+                            //EndDayFlag = true;
+                            //EndEnvrnFlag = true;
+                            // //TODO write out states somewhere, somehow
+                            //break;
+                            
                         }
                         if (AnySlabsInModel || AnyBasementsInModel) {
                             SimulateGroundDomains(false);
@@ -738,6 +740,11 @@ namespace SimulationManager {
         if (ErrorsFound) {
             ShowFatalError("Error condition occurred.  Previous Severe Errors cause termination.");
         }
+    }
+
+    void save_all_states()
+    {
+        ExteriorEnergyUse::save_state();
     }
 
     void GetProjectData()

@@ -471,7 +471,7 @@ void EnergyPlusFixture::load_all_states()
 void EnergyPlusFixture::save_all_states()
 {
     // stub out wrapper for getting all the current states
-    ExteriorEnergyUse::save_states();
+    ExteriorEnergyUse::save_state();
 }
 std::string EnergyPlusFixture::delimited_string(std::vector<std::string> const &strings, std::string const &delimiter)
 {

@@ -62,6 +62,8 @@ namespace EnergyPlus {
 namespace ExteriorEnergyUse {
 
     // Using/Aliasing
+    //json format for states
+    using json = nlohmann::json;
 
     // Data
     // MODULE PARAMETER DEFINITIONS:
@@ -95,10 +97,8 @@ namespace ExteriorEnergyUse {
     // Needed for unit tests, should not be normally called.
     void clear_state();
 
-    //json format for states
-    using json = nlohmann::json;
     // save the current value of all the state variables
-    void save_states();
+    void save_state();
     // load the current value of all the state variables
     void load_states();
 

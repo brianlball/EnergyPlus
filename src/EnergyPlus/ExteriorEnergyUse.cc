@@ -45,6 +45,9 @@
 // OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+// C++ Headers
+#include <fstream>
+
 // EnergyPlus Headers
 #include <DataEnvironment.hh>
 #include <DataIPShortCuts.hh>
@@ -58,6 +61,7 @@
 #include <OutputReportPredefined.hh>
 #include <ScheduleManager.hh>
 #include <UtilityRoutines.hh>
+#include <SimulationManager.hh>
 
 namespace EnergyPlus {
 
@@ -174,11 +178,12 @@ namespace ExteriorEnergyUse {
     }
 
     // save the current value of all the state variables
-    void save_states()
+    void save_state()
     {
-        //setup json to save
-        json root = {
-            // ExteriorLightUsage
+         //setup json to save
+         json root, ExteriorLightUsagejson, ExteriorEquipmentUsagejson;
+         // ExteriorLightUsage
+         ExteriorLightUsagejson = {
             {"SchedPtr", ExteriorLightUsage().SchedPtr},
             {"DesignLevel", ExteriorLightUsage().DesignLevel},
             {"Power", ExteriorLightUsage().Power},
@@ -188,17 +193,24 @@ namespace ExteriorEnergyUse {
             {"DemandLimit", ExteriorLightUsage().DemandLimit},
             {"PowerActuatorOn", ExteriorLightUsage().PowerActuatorOn},
             {"SumConsumption", ExteriorLightUsage().SumConsumption},
-            {"SumTimeNotZeroCons", ExteriorLightUsage().SumTimeNotZeroCons},
-            // ExteriorEquipmentUsage
+            {"SumTimeNotZeroCons", ExteriorLightUsage().SumTimeNotZeroCons}
+         };
+         root["ExteriorLightUsage"] = ExteriorLightUsagejson;
+                // ExteriorEquipmentUsage
+         ExteriorEquipmentUsagejson = {
             {"FuelType", ExteriorEquipmentUsage().FuelType},
             {"SchedPtr", ExteriorEquipmentUsage().SchedPtr},
             {"DesignLevel", ExteriorEquipmentUsage().DesignLevel},
             {"Power", ExteriorEquipmentUsage().Power},
             {"CurrentUse", ExteriorEquipmentUsage().CurrentUse},
             {"ManageDemand", ExteriorEquipmentUsage().ManageDemand},
-            {"DemandLimit", ExteriorEquipmentUsage().DemandLimit}};
-
-        //save json or pass json to master json
+            {"DemandLimit", ExteriorEquipmentUsage().DemandLimit}
+         };
+         root["ExteriorEquipmentUsage"] = ExteriorEquipmentUsagejson;
+         //save json or pass json to master json
+         std::ofstream ofs("ExteriorEnergyUseStates.json");
+         ofs << std::setw(2) << root;
+         ofs.close();
     }
 
     void ManageExteriorEnergyUse()
