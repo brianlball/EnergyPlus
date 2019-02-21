@@ -47,11 +47,13 @@
 
 // C++ Headers
 #include <fstream>
+#include <string>
 
 // EnergyPlus Headers
 #include <DataEnvironment.hh>
 #include <DataIPShortCuts.hh>
 #include <DataPrecisionGlobals.hh>
+#include <DisplayRoutines.hh>
 #include <EMSManager.hh>
 #include <ExteriorEnergyUse.hh>
 #include <General.hh>
@@ -183,19 +185,22 @@ namespace ExteriorEnergyUse {
          //setup json to save
          json root, ExteriorLightUsagejson, ExteriorEquipmentUsagejson;
          // ExteriorLightUsage
-         ExteriorLightUsagejson = {
-            {"SchedPtr", ExteriorLightUsage().SchedPtr},
-            {"DesignLevel", ExteriorLightUsage().DesignLevel},
-            {"Power", ExteriorLightUsage().Power},
-            {"CurrentUse", ExteriorLightUsage().CurrentUse},
-            {"ControlMode", ExteriorLightUsage().ControlMode},
-            {"ManageDemand", ExteriorLightUsage().ManageDemand},
-            {"DemandLimit", ExteriorLightUsage().DemandLimit},
-            {"PowerActuatorOn", ExteriorLightUsage().PowerActuatorOn},
-            {"SumConsumption", ExteriorLightUsage().SumConsumption},
-            {"SumTimeNotZeroCons", ExteriorLightUsage().SumTimeNotZeroCons}
-         };
-         root["ExteriorLightUsage"] = ExteriorLightUsagejson;
+         for (int i = 1; i <= ExteriorLights.size(); ++i) {
+             DisplayString("ExteriorLightUsage states i: " + std::to_string(i));
+             ExteriorLightUsagejson = {
+                {"SchedPtr", ExteriorLights(i).SchedPtr},
+                {"DesignLevel", ExteriorLights(i).DesignLevel},
+                {"Power", ExteriorLights(i).Power},
+                {"CurrentUse", ExteriorLights(i).CurrentUse},
+                {"ControlMode", ExteriorLights(i).ControlMode},
+                {"ManageDemand", ExteriorLights(i).ManageDemand},
+                {"DemandLimit", ExteriorLights(i).DemandLimit},
+                {"PowerActuatorOn", ExteriorLights(i).PowerActuatorOn},
+                {"SumConsumption", ExteriorLights(i).SumConsumption},
+                {"SumTimeNotZeroCons", ExteriorLights(i).SumTimeNotZeroCons}
+             };
+             root["ExteriorLightUsage " + std::to_string(i)] = ExteriorLightUsagejson;
+         }
                 // ExteriorEquipmentUsage
          ExteriorEquipmentUsagejson = {
             {"FuelType", ExteriorEquipmentUsage().FuelType},

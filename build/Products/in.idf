@@ -55,7 +55,7 @@
   Exterior:Lights,
     OutsideLightsSchedule2,   !- Name
     ON,                      !- Schedule Name
-    1000,                    !- Design Level {W}
+    500,                    !- Design Level {W}
     ScheduleNameOnly;        !- Control Option
 	
   Output:JSON,
