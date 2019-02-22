@@ -62,8 +62,8 @@
 #include <OutputProcessor.hh>
 #include <OutputReportPredefined.hh>
 #include <ScheduleManager.hh>
-#include <UtilityRoutines.hh>
 #include <SimulationManager.hh>
+#include <UtilityRoutines.hh>
 
 namespace EnergyPlus {
 
@@ -153,69 +153,71 @@ namespace ExteriorEnergyUse {
     // load the current value of all the state variables
     void load_states()
     {
-        //get saved json from master json
+        // get saved json from master json
 
-        //set these local values from json
-        json root = {
-         // ExteriorLightUsage     
-            {"SchedPtr", ExteriorLightUsage().SchedPtr},
-            {"DesignLevel", ExteriorLightUsage().DesignLevel},
-            {"Power", ExteriorLightUsage().Power},
-            {"CurrentUse", ExteriorLightUsage().CurrentUse},
-            {"ControlMode", ExteriorLightUsage().ControlMode},
-            {"ManageDemand", ExteriorLightUsage().ManageDemand},
-            {"DemandLimit", ExteriorLightUsage().DemandLimit},
-            {"PowerActuatorOn", ExteriorLightUsage().PowerActuatorOn}, 
-            {"SumConsumption", ExteriorLightUsage().SumConsumption}, 
-            {"SumTimeNotZeroCons", ExteriorLightUsage().SumTimeNotZeroCons},
-         // ExteriorEquipmentUsage
-            {"FuelType", ExteriorEquipmentUsage().FuelType},
-            {"SchedPtr", ExteriorEquipmentUsage().SchedPtr},
-            {"DesignLevel", ExteriorEquipmentUsage().DesignLevel},
-            {"Power", ExteriorEquipmentUsage().Power},
-            {"CurrentUse", ExteriorEquipmentUsage().CurrentUse},
-            {"ManageDemand", ExteriorEquipmentUsage().ManageDemand},
-            {"DemandLimit", ExteriorEquipmentUsage().DemandLimit}
-        };
+        // set these local values from json
+        json root = {// ExteriorLightUsage
+                     {"SchedPtr", ExteriorLightUsage().SchedPtr},
+                     {"DesignLevel", ExteriorLightUsage().DesignLevel},
+                     {"Power", ExteriorLightUsage().Power},
+                     {"CurrentUse", ExteriorLightUsage().CurrentUse},
+                     {"ControlMode", ExteriorLightUsage().ControlMode},
+                     {"ManageDemand", ExteriorLightUsage().ManageDemand},
+                     {"DemandLimit", ExteriorLightUsage().DemandLimit},
+                     {"PowerActuatorOn", ExteriorLightUsage().PowerActuatorOn},
+                     {"SumConsumption", ExteriorLightUsage().SumConsumption},
+                     {"SumTimeNotZeroCons", ExteriorLightUsage().SumTimeNotZeroCons},
+                     // ExteriorEquipmentUsage
+                     {"FuelType", ExteriorEquipmentUsage().FuelType},
+                     {"SchedPtr", ExteriorEquipmentUsage().SchedPtr},
+                     {"DesignLevel", ExteriorEquipmentUsage().DesignLevel},
+                     {"Power", ExteriorEquipmentUsage().Power},
+                     {"CurrentUse", ExteriorEquipmentUsage().CurrentUse},
+                     {"ManageDemand", ExteriorEquipmentUsage().ManageDemand},
+                     {"DemandLimit", ExteriorEquipmentUsage().DemandLimit}};
     }
 
     // save the current value of all the state variables
     void save_state()
     {
-         //setup json to save
-         json root, ExteriorLightUsagejson, ExteriorEquipmentUsagejson;
-         // ExteriorLightUsage
-         for (int i = 1; i <= ExteriorLights.size(); ++i) {
-             DisplayString("ExteriorLightUsage states i: " + std::to_string(i));
-             ExteriorLightUsagejson = {
-                {"SchedPtr", ExteriorLights(i).SchedPtr},
-                {"DesignLevel", ExteriorLights(i).DesignLevel},
-                {"Power", ExteriorLights(i).Power},
-                {"CurrentUse", ExteriorLights(i).CurrentUse},
-                {"ControlMode", ExteriorLights(i).ControlMode},
-                {"ManageDemand", ExteriorLights(i).ManageDemand},
-                {"DemandLimit", ExteriorLights(i).DemandLimit},
-                {"PowerActuatorOn", ExteriorLights(i).PowerActuatorOn},
-                {"SumConsumption", ExteriorLights(i).SumConsumption},
-                {"SumTimeNotZeroCons", ExteriorLights(i).SumTimeNotZeroCons}
-             };
-             root["ExteriorLightUsage " + std::to_string(i)] = ExteriorLightUsagejson;
-         }
-                // ExteriorEquipmentUsage
-         ExteriorEquipmentUsagejson = {
-            {"FuelType", ExteriorEquipmentUsage().FuelType},
-            {"SchedPtr", ExteriorEquipmentUsage().SchedPtr},
-            {"DesignLevel", ExteriorEquipmentUsage().DesignLevel},
-            {"Power", ExteriorEquipmentUsage().Power},
-            {"CurrentUse", ExteriorEquipmentUsage().CurrentUse},
-            {"ManageDemand", ExteriorEquipmentUsage().ManageDemand},
-            {"DemandLimit", ExteriorEquipmentUsage().DemandLimit}
-         };
-         root["ExteriorEquipmentUsage"] = ExteriorEquipmentUsagejson;
-         //save json or pass json to master json
-         std::ofstream ofs("ExteriorEnergyUseStates.json");
-         ofs << std::setw(2) << root;
-         ofs.close();
+        // setup json to save
+        json root;
+        json ExteriorLightUsagejson, ExteriorEquipmentUsagejson;
+        // ExteriorLightUsage
+        for (auto i = 1; i <= ExteriorLights.size(); ++i) {
+            DisplayString("ExteriorLightUsage states i: " + std::to_string(i));  //for debugging
+            ExteriorLightUsagejson += {{"iterator",i},                  //is this needed, is order preserved for the load function?
+                                      {"Name",ExteriorLights(i).Name},  //is this good enough for matching in the load function?
+                                      {"SchedPtr", ExteriorLights(i).SchedPtr},
+                                      {"DesignLevel", ExteriorLights(i).DesignLevel},
+                                      {"Power", ExteriorLights(i).Power},
+                                      {"CurrentUse", ExteriorLights(i).CurrentUse},
+                                      {"ControlMode", ExteriorLights(i).ControlMode},
+                                      {"ManageDemand", ExteriorLights(i).ManageDemand},
+                                      {"DemandLimit", ExteriorLights(i).DemandLimit},
+                                      {"PowerActuatorOn", ExteriorLights(i).PowerActuatorOn},
+                                      {"SumConsumption", ExteriorLights(i).SumConsumption},
+                                      {"SumTimeNotZeroCons", ExteriorLights(i).SumTimeNotZeroCons}};
+        }
+        root["ExteriorLightUsage"] = ExteriorLightUsagejson;
+        // ExteriorEquipmentUsage
+        for (auto i = 1; i <= ExteriorEquipment.size(); ++i) {
+            DisplayString("ExteriorEquipment states i: " + std::to_string(i));
+            ExteriorEquipmentUsagejson += {{"iterator",i},
+                                          {"Name",ExteriorEquipment(i).Name},
+                                          {"FuelType", ExteriorEquipment(i).FuelType},
+                                          {"SchedPtr", ExteriorEquipment(i).SchedPtr},
+                                          {"DesignLevel", ExteriorEquipment(i).DesignLevel},
+                                          {"Power", ExteriorEquipment(i).Power},
+                                          {"CurrentUse", ExteriorEquipment(i).CurrentUse},
+                                          {"ManageDemand", ExteriorEquipment(i).ManageDemand},
+                                          {"DemandLimit", ExteriorEquipment(i).DemandLimit}};
+        }
+        root["ExteriorEquipmentUsage"] = ExteriorEquipmentUsagejson;
+        // save json or pass json to master json
+        std::ofstream ofs("ExteriorEnergyUseStates.json");
+        ofs << std::setw(2) << root;
+        ofs.close();
     }
 
     void ManageExteriorEnergyUse()
