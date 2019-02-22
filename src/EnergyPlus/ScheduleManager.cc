@@ -47,6 +47,8 @@
 
 // C++ Headers
 #include <map>
+#include <fstream>
+#include <string>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/Array.functions.hh>
@@ -219,6 +221,35 @@ namespace ScheduleManager {
         UniqueScheduleNames.clear();
     }
 
+    // save the current value of all the state variables
+    void save_state()
+    {
+        // setup json to save
+        json root;
+        json Schedulejson;
+        // Schedule
+        for (auto i = 1; i <= Schedule.size(); ++i) {
+            DisplayString("Schedule states i: " + std::to_string(i));                      //for debugging
+            Schedulejson += {{"iterator",i},                                               //is this needed, is order preserved for the load function?
+                            {"Name",Schedule(i).Name},                                     //is this good enough for matching in the load function?
+                            {"ScheduleTypePtr", Schedule(i).ScheduleTypePtr},
+                           // {"WeekSchedulePointer", Schedule(i).WeekSchedulePointer},    //what to do here?
+                            {"SchType", Schedule(i).SchType},
+                            {"Used", Schedule(i).Used},
+                            {"MaxMinSet", Schedule(i).MaxMinSet},
+                            {"MaxValue", Schedule(i).MaxValue},
+                            {"MinValue", Schedule(i).MinValue},
+                            {"CurrentValue", Schedule(i).CurrentValue},
+                            {"EMSActuatedOn", Schedule(i).EMSActuatedOn},
+                            {"EMSValue", Schedule(i).EMSValue}};
+        }
+        root["Schedule"] = Schedulejson;
+
+        // save json or pass json to master json
+        std::ofstream ofs("ScheduleManager.json");
+        ofs << std::setw(2) << root;
+        ofs.close();
+    }
     void ProcessScheduleInput()
     {
 

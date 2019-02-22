@@ -57,6 +57,8 @@
 #include <ObjexxFCL/Array2S.hh>
 #include <ObjexxFCL/Optional.hh>
 
+#include <nlohmann/json.hpp>
+
 // EnergyPlus Headers
 #include <DataGlobals.hh>
 #include <EnergyPlus.hh>
@@ -66,6 +68,8 @@ namespace EnergyPlus {
 namespace ScheduleManager {
 
     // Using/Aliasing
+    //json format for states
+    using json = nlohmann::json;
 
     // Data
     // MODULE PARAMETER DEFINITIONS
@@ -190,6 +194,9 @@ namespace ScheduleManager {
     // Clears the global data in ScheduleManager.
     // Needed for unit tests, should not be normally called.
     void clear_state();
+
+    // save the current value of all the state variables
+    void save_state();
 
     void ProcessScheduleInput();
 

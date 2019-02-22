@@ -62,7 +62,7 @@
 #include <OutputProcessor.hh>
 #include <OutputReportPredefined.hh>
 #include <ScheduleManager.hh>
-#include <SimulationManager.hh>
+//#include <SimulationManager.hh>
 #include <UtilityRoutines.hh>
 
 namespace EnergyPlus {
@@ -150,6 +150,36 @@ namespace ExteriorEnergyUse {
         GetExteriorEnergyInputFlag = true;
     }
 
+    void to_json(json& j, const ExteriorLightUsage& light)
+    {
+        j = json{
+            {"SchedPtr", light.SchedPtr},
+            {"DesignLevel", light.DesignLevel},
+            {"Power", light.Power},
+            {"CurrentUse", light.CurrentUse},
+            {"ControlMode", light.ControlMode},
+            {"ManageDemand", light.ManageDemand},
+            {"DemandLimit", light.DemandLimit},
+            {"PowerActuatorOn", light.PowerActuatorOn},
+            {"SumConsumption", light.SumConsumption},
+            {"SumTimeNotZeroCons", light.SumTimeNotZeroCons}
+        };
+    }
+
+    void from_json(const json& j, ExteriorLightUsage& light)
+    {
+        j.at("SchedPtr").get_to(light.SchedPtr);
+        j.at("DesignLevel").get_to(light.DesignLevel);
+        j.at("Power").get_to(light.Power);
+        j.at("CurrentUse").get_to(light.CurrentUse);
+        j.at("ControlMode").get_to(light.ControlMode);
+        j.at("ManageDemand").get_to(light.ManageDemand);
+        j.at("DemandLimit").get_to(light.DemandLimit);
+        j.at("PowerActuatorOn").get_to(light.PowerActuatorOn);
+        j.at("SumConsumption").get_to(light.SumConsumption);
+        j.at("SumTimeNotZeroCons").get_to(light.SumTimeNotZeroCons);
+    }
+
     // load the current value of all the state variables
     void load_states()
     {
@@ -181,12 +211,12 @@ namespace ExteriorEnergyUse {
     void save_state()
     {
         // setup json to save
-        json root;
+        json root, temp;
         json ExteriorLightUsagejson, ExteriorEquipmentUsagejson;
         // ExteriorLightUsage
         for (auto i = 1; i <= ExteriorLights.size(); ++i) {
             DisplayString("ExteriorLightUsage states i: " + std::to_string(i));  //for debugging
-            ExteriorLightUsagejson += {{"iterator",i},                  //is this needed, is order preserved for the load function?
+            /*ExteriorLightUsagejson += {{"iterator",i},                  //is this needed, is order preserved for the load function?
                                       {"Name",ExteriorLights(i).Name},  //is this good enough for matching in the load function?
                                       {"SchedPtr", ExteriorLights(i).SchedPtr},
                                       {"DesignLevel", ExteriorLights(i).DesignLevel},
@@ -198,6 +228,9 @@ namespace ExteriorEnergyUse {
                                       {"PowerActuatorOn", ExteriorLights(i).PowerActuatorOn},
                                       {"SumConsumption", ExteriorLights(i).SumConsumption},
                                       {"SumTimeNotZeroCons", ExteriorLights(i).SumTimeNotZeroCons}};
+            */
+            to_json(temp, ExteriorLights(i));
+            ExteriorLightUsagejson+=temp;
         }
         root["ExteriorLightUsage"] = ExteriorLightUsagejson;
         // ExteriorEquipmentUsage

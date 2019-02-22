@@ -62,7 +62,7 @@ namespace EnergyPlus {
 namespace ExteriorEnergyUse {
 
     // Using/Aliasing
-    //json format for states
+    // json format for states
     using json = nlohmann::json;
 
     // Data
@@ -130,46 +130,50 @@ namespace ExteriorEnergyUse {
         }
     };
 
+    void to_json(json &j, const ExteriorLightUsage &light);
+
+    void from_json(const json &j, ExteriorLightUsage &light);
+
     struct ExteriorEquipmentUsage
-    {
-        // Members
-        std::string Name; // Descriptive name -- will show on reporting
-        int FuelType;
-        int SchedPtr;       // Can be scheduled
-        Real64 DesignLevel; // Design Consumption (Watts, except for Water Equipment)
-        Real64 Power;       // Power = DesignLevel * ScheduleValue
-        Real64 CurrentUse;  // Use for this time step
-        bool ManageDemand;  // Flag to indicate whether to use demand limiting
-        Real64 DemandLimit; // Demand limit set by demand manager [W]
-
-        // Default Constructor
-        ExteriorEquipmentUsage() : FuelType(0), SchedPtr(0), DesignLevel(0.0), Power(0.0), CurrentUse(0.0), ManageDemand(false), DemandLimit(0.0)
         {
-        }
-    };
+            // Members
+            std::string Name; // Descriptive name -- will show on reporting
+            int FuelType;
+            int SchedPtr;       // Can be scheduled
+            Real64 DesignLevel; // Design Consumption (Watts, except for Water Equipment)
+            Real64 Power;       // Power = DesignLevel * ScheduleValue
+            Real64 CurrentUse;  // Use for this time step
+            bool ManageDemand;  // Flag to indicate whether to use demand limiting
+            Real64 DemandLimit; // Demand limit set by demand manager [W]
 
-    // Object Data
-    extern Array1D<ExteriorLightUsage> ExteriorLights;        // Structure for Exterior Light reporting
-    extern Array1D<ExteriorEquipmentUsage> ExteriorEquipment; // Structure for Exterior Equipment Reporting
+            // Default Constructor
+            ExteriorEquipmentUsage() : FuelType(0), SchedPtr(0), DesignLevel(0.0), Power(0.0), CurrentUse(0.0), ManageDemand(false), DemandLimit(0.0)
+            {
+            }
+        };
 
-    // Functions
+        // Object Data
+        extern Array1D<ExteriorLightUsage> ExteriorLights;        // Structure for Exterior Light reporting
+        extern Array1D<ExteriorEquipmentUsage> ExteriorEquipment; // Structure for Exterior Equipment Reporting
 
-    void ManageExteriorEnergyUse();
+        // Functions
 
-    void GetExteriorEnergyUseInput();
+        void ManageExteriorEnergyUse();
 
-    void ValidateFuelType(int &FuelTypeNumber,                    // Fuel Type to be set in structure.
-                          std::string const &FuelTypeAlpha,       // Fuel Type String
-                          std::string &FuelTypeString,            // Standardized Fuel Type String (for variable naming)
-                          std::string const &CurrentModuleObject, // object being parsed
-                          std::string const &CurrentField,        // current field being parsed
-                          std::string const &CurrentName          // current object name being parsed
-    );
+        void GetExteriorEnergyUseInput();
 
-    void ReportExteriorEnergyUse();
+        void ValidateFuelType(int &FuelTypeNumber,                    // Fuel Type to be set in structure.
+                              std::string const &FuelTypeAlpha,       // Fuel Type String
+                              std::string &FuelTypeString,            // Standardized Fuel Type String (for variable naming)
+                              std::string const &CurrentModuleObject, // object being parsed
+                              std::string const &CurrentField,        // current field being parsed
+                              std::string const &CurrentName          // current object name being parsed
+        );
+
+        void ReportExteriorEnergyUse();
+
+    } // namespace ExteriorEnergyUse
 
 } // namespace ExteriorEnergyUse
-
-} // namespace EnergyPlus
 
 #endif
