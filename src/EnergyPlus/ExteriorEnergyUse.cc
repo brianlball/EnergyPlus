@@ -216,23 +216,14 @@ namespace ExteriorEnergyUse {
         // ExteriorLightUsage
         for (auto i = 1; i <= ExteriorLights.size(); ++i) {
             DisplayString("ExteriorLightUsage states i: " + std::to_string(i));  //for debugging
-            /*ExteriorLightUsagejson += {{"iterator",i},                  //is this needed, is order preserved for the load function?
-                                      {"Name",ExteriorLights(i).Name},  //is this good enough for matching in the load function?
-                                      {"SchedPtr", ExteriorLights(i).SchedPtr},
-                                      {"DesignLevel", ExteriorLights(i).DesignLevel},
-                                      {"Power", ExteriorLights(i).Power},
-                                      {"CurrentUse", ExteriorLights(i).CurrentUse},
-                                      {"ControlMode", ExteriorLights(i).ControlMode},
-                                      {"ManageDemand", ExteriorLights(i).ManageDemand},
-                                      {"DemandLimit", ExteriorLights(i).DemandLimit},
-                                      {"PowerActuatorOn", ExteriorLights(i).PowerActuatorOn},
-                                      {"SumConsumption", ExteriorLights(i).SumConsumption},
-                                      {"SumTimeNotZeroCons", ExteriorLights(i).SumTimeNotZeroCons}};
-            */
-            to_json(temp, ExteriorLights(i));
-            ExteriorLightUsagejson+=temp;
+            json temp = ExteriorLights(i);
+            ExteriorLightUsagejson[std::to_string(i)]=temp;
         }
-        root["ExteriorLightUsage"] = ExteriorLightUsagejson;
+        
+        ExteriorLightUsagejson["lower_bound"]=ExteriorLights.l();
+        ExteriorLightUsagejson["upper_bound"]=ExteriorLights.u();
+        root["ExteriorLightUsage"]["data"] = ExteriorLightUsagejson;
+
         // ExteriorEquipmentUsage
         for (auto i = 1; i <= ExteriorEquipment.size(); ++i) {
             DisplayString("ExteriorEquipment states i: " + std::to_string(i));
