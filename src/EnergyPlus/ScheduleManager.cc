@@ -235,6 +235,32 @@ namespace ScheduleManager {
                 {"EMSValue", schedule.EMSValue}};
     }
 
+    void to_json(json &j, const WeekScheduleData &schedule)
+    {
+        j = json{{"Used", schedule.Used}//,
+                 //{"DaySchedulePointer", schedule.DaySchedulePointer}
+                 };
+    }
+
+    void to_json(json &j, const DayScheduleData &schedule)
+    {
+        j = json{{"ScheduleTypePtr", schedule.ScheduleTypePtr},
+                 {"IntervalInterpolated", schedule.IntervalInterpolated},
+                 {"Used", schedule.Used},
+                 {"TSValue", schedule.TSValue},
+                 {"TSValMax", schedule.TSValMax},
+                 {"TSValMin", schedule.TSValMin}};
+    }
+
+    void to_json(json &j, const ScheduleTypeData &schedule)
+    {
+        j = json{{"Limited", schedule.Limited},
+                 {"Minimum", schedule.Minimum},
+                 {"Maximum", schedule.Maximum},
+                 {"IsReal", schedule.IsReal},
+                 {"UnitType", schedule.UnitType}};
+    }
+
     void from_json(const json &j, ScheduleData &schedule)
     {
         j.at("ScheduleTypePtr").get_to(schedule.ScheduleTypePtr);
@@ -248,26 +274,89 @@ namespace ScheduleManager {
         j.at("EMSActuatedOn").get_to(schedule.EMSActuatedOn);
         j.at("EMSValue").get_to(schedule.EMSValue);
     }
+    
+    void from_json(const json &j, DayScheduleData &schedule)
+    {
+        j.at("ScheduleTypePtr").get_to(schedule.ScheduleTypePtr);
+        j.at("IntervalInterpolated").get_to(schedule.IntervalInterpolated);
+        j.at("Used").get_to(schedule.Used);
+        //j.at("TSValue").get_to(schedule.TSValue);  //what to do here?
+        j.at("TSValMax").get_to(schedule.TSValMax);
+        j.at("TSValMin").get_to(schedule.TSValMin);
+    }
+
+    void from_json(const json &j, WeekScheduleData &schedule)
+    {
+        j.at("Used").get_to(schedule.Used);
+        // j.at("DaySchedulePointer").get_to(schedule.DaySchedulePointer);    //what to do here?
+    }
+
+    void from_json(const json &j, ScheduleTypeData &schedule)
+    {
+        j.at("Limited").get_to(schedule.Limited);
+        j.at("Minimum").get_to(schedule.Minimum);
+        j.at("Maximum").get_to(schedule.Maximum);
+        j.at("IsReal").get_to(schedule.IsReal);
+        j.at("UnitType").get_to(schedule.UnitType);
+    }
 
     // save the current value of all the state variables
     void save_state()
     {
         // setup json to save
-        json root;
-        json Schedulejson;
+        json root, temp;
+        json Schedulejson, DaySchedulejson, WeekSchedulejson, ScheduleTypejson;
         // Schedule
         DisplayString("Schedule.l(): " + std::to_string(Schedule.l()));
         DisplayString("Schedule.u(): " + std::to_string(Schedule.u()));
         DisplayString("Schedule.size(): " + std::to_string(Schedule.size()));
         for (auto i = Schedule.l(); i <= Schedule.u(); ++i) {
-            DisplayString("Schedule states i: " + std::to_string(i));                      //for debugging
-            json temp = Schedule(i);
+            DisplayString("Schedule states i: " + std::to_string(i)); //for debugging
+            temp = Schedule(i);
             Schedulejson[std::to_string(i)] = temp;
         }
-        
         Schedulejson["lower_bound"] = Schedule.l();
         Schedulejson["upper_bound"] = Schedule.u();
         root["Schedule"]["data"] = Schedulejson;
+
+        // DaySchedule
+        DisplayString("DaySchedule.l(): " + std::to_string(DaySchedule.l()));
+        DisplayString("DaySchedule.u(): " + std::to_string(DaySchedule.u()));
+        DisplayString("DaySchedule.size(): " + std::to_string(DaySchedule.size()));
+        for (auto i = DaySchedule.l(); i <= DaySchedule.u(); ++i) {
+            DisplayString("DaySchedule states i: " + std::to_string(i)); //for debugging
+            temp = DaySchedule(i);
+            DaySchedulejson[std::to_string(i)] = temp;
+        }
+        DaySchedulejson["lower_bound"] = DaySchedule.l();
+        DaySchedulejson["upper_bound"] = DaySchedule.u();
+        root["DaySchedule"]["data"] = DaySchedulejson;
+
+        // WeekSchedule
+        DisplayString("WeekSchedule.l(): " + std::to_string(WeekSchedule.l()));
+        DisplayString("WeekSchedule.u(): " + std::to_string(WeekSchedule.u()));
+        DisplayString("WeekSchedule.size(): " + std::to_string(WeekSchedule.size()));
+        for (auto i = WeekSchedule.l(); i <= WeekSchedule.u(); ++i) {
+            DisplayString("WeekSchedule states i: " + std::to_string(i)); //for debugging
+            temp = WeekSchedule(i);
+            WeekSchedulejson[std::to_string(i)] = temp;
+        }
+        WeekSchedulejson["lower_bound"] = WeekSchedule.l();
+        WeekSchedulejson["upper_bound"] = WeekSchedule.u();
+        root["WeekSchedule"]["data"] = WeekSchedulejson;
+
+        // ScheduleType
+        DisplayString("ScheduleType.l(): " + std::to_string(ScheduleType.l()));
+        DisplayString("ScheduleType.u(): " + std::to_string(ScheduleType.u()));
+        DisplayString("ScheduleType.size(): " + std::to_string(ScheduleType.size()));
+        for (auto i = ScheduleType.l(); i <= ScheduleType.u(); ++i) {
+            DisplayString("ScheduleType states i: " + std::to_string(i)); //for debugging
+            temp = ScheduleType(i);
+            ScheduleTypejson[std::to_string(i)] = temp;
+        }
+        ScheduleTypejson["lower_bound"] = ScheduleType.l();
+        ScheduleTypejson["upper_bound"] = ScheduleType.u();
+        root["ScheduleType"]["data"] = ScheduleTypejson;
 
         // save json or pass json to master json
         std::ofstream ofs("ScheduleManager.json");

@@ -184,14 +184,14 @@ namespace ScheduleManager {
     };
 
     void to_json(json &j, const ScheduleData &schedule);
-    //void to_json(json &j, const WeekScheduleData &equip);
-    //void to_json(json &j, const DayScheduleData &schedule);
-    //void to_json(json &j, const ScheduleTypeData &equip);
+    void to_json(json &j, const WeekScheduleData &schedule);
+    void to_json(json &j, const DayScheduleData &schedule);
+    void to_json(json &j, const ScheduleTypeData &schedule);
 
     void from_json(const json &j, ScheduleData &schedule);
-    //void from_json(const json &j, WeekScheduleData &equip);
-    //void from_json(const json &j, DayScheduleData &schedule);
-    //void from_json(const json &j, ScheduleTypeData &equip);
+    void from_json(const json &j, WeekScheduleData &schedule);
+    void from_json(const json &j, DayScheduleData &schedule);
+    void from_json(const json &j, ScheduleTypeData &schedule);
 
     // Object Data
     extern Array1D<ScheduleTypeData> ScheduleType; // Allowed Schedule Types
