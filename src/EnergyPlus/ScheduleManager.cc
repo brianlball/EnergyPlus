@@ -259,12 +259,12 @@ namespace ScheduleManager {
         DisplayString("Schedule.l(): " + std::to_string(Schedule.l()));
         DisplayString("Schedule.u(): " + std::to_string(Schedule.u()));
         DisplayString("Schedule.size(): " + std::to_string(Schedule.size()));
-      /*  for (auto i = Schedule.l(); i <= Schedule.u(); ++i) {
+        for (auto i = Schedule.l(); i <= Schedule.u(); ++i) {
             DisplayString("Schedule states i: " + std::to_string(i));                      //for debugging
             json temp = Schedule(i);
             Schedulejson[std::to_string(i)] = temp;
         }
-        */
+        
         Schedulejson["lower_bound"] = Schedule.l();
         Schedulejson["upper_bound"] = Schedule.u();
         root["Schedule"]["data"] = Schedulejson;

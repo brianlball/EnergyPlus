@@ -218,7 +218,7 @@ namespace ExteriorEnergyUse {
         DisplayString("ExteriorLights.l(): " + std::to_string(ExteriorLights.l()));
         DisplayString("ExteriorLights.u(): " + std::to_string(ExteriorLights.u()));
         DisplayString("ExteriorLights.size(): " + std::to_string(ExteriorLights.size()));
-        for (auto i = 1; i <= ExteriorLights.size(); ++i) {
+        for (auto i = ExteriorLights.l(); i <= ExteriorLights.u(); ++i) {
             DisplayString("ExteriorLightUsage states i: " + std::to_string(i)); // for debugging
             json temp = ExteriorLights(i);
             ExteriorLightUsagejson[std::to_string(i)] = temp;
@@ -231,7 +231,7 @@ namespace ExteriorEnergyUse {
         DisplayString("ExteriorEquipment.l(): " + std::to_string(ExteriorEquipment.l()));
         DisplayString("ExteriorEquipment.u(): " + std::to_string(ExteriorEquipment.u()));
         DisplayString("ExteriorEquipment.size(): " + std::to_string(ExteriorEquipment.size()));
-        for (auto i = 1; i <= ExteriorEquipment.size(); ++i) {
+        for (auto i = ExteriorEquipment.l(); i <= ExteriorEquipment.u(); ++i) {
             DisplayString("ExteriorEquipment states i: " + std::to_string(i));
             json temp = ExteriorEquipment(i);
             ExteriorEquipmentUsagejson[std::to_string(i)] = temp;
