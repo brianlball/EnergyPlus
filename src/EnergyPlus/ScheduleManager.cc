@@ -221,6 +221,34 @@ namespace ScheduleManager {
         UniqueScheduleNames.clear();
     }
 
+    void to_json(json &j, const ScheduleData &schedule)
+    {
+        j = json{{"ScheduleTypePtr", schedule.ScheduleTypePtr},
+                // {"WeekSchedulePointer", schedule.WeekSchedulePointer},    //what to do here?
+                {"SchType", schedule.SchType},
+                {"Used", schedule.Used},
+                {"MaxMinSet", schedule.MaxMinSet},
+                {"MaxValue", schedule.MaxValue},
+                {"MinValue", schedule.MinValue},
+                {"CurrentValue", schedule.CurrentValue},
+                {"EMSActuatedOn", schedule.EMSActuatedOn},
+                {"EMSValue", schedule.EMSValue}};
+    }
+
+    void from_json(const json &j, ScheduleData &schedule)
+    {
+        j.at("ScheduleTypePtr").get_to(schedule.ScheduleTypePtr);
+        // j.at("WeekSchedulePointer").get_to(schedule.WeekSchedulePointer);    //what to do here?
+        j.at("SchType").get_to(schedule.SchType);
+        j.at("Used").get_to(schedule.Used);
+        j.at("MaxMinSet").get_to(schedule.MaxMinSet);
+        j.at("MaxValue").get_to(schedule.MaxValue);
+        j.at("MinValue").get_to(schedule.MinValue);
+        j.at("CurrentValue").get_to(schedule.CurrentValue);
+        j.at("EMSActuatedOn").get_to(schedule.EMSActuatedOn);
+        j.at("EMSValue").get_to(schedule.EMSValue);
+    }
+
     // save the current value of all the state variables
     void save_state()
     {
@@ -228,28 +256,25 @@ namespace ScheduleManager {
         json root;
         json Schedulejson;
         // Schedule
-        for (auto i = 1; i <= Schedule.size(); ++i) {
+        DisplayString("Schedule.l(): " + std::to_string(Schedule.l()));
+        DisplayString("Schedule.u(): " + std::to_string(Schedule.u()));
+        DisplayString("Schedule.size(): " + std::to_string(Schedule.size()));
+      /*  for (auto i = Schedule.l(); i <= Schedule.u(); ++i) {
             DisplayString("Schedule states i: " + std::to_string(i));                      //for debugging
-            Schedulejson += {{"iterator",i},                                               //is this needed, is order preserved for the load function?
-                            {"Name",Schedule(i).Name},                                     //is this good enough for matching in the load function?
-                            {"ScheduleTypePtr", Schedule(i).ScheduleTypePtr},
-                           // {"WeekSchedulePointer", Schedule(i).WeekSchedulePointer},    //what to do here?
-                            {"SchType", Schedule(i).SchType},
-                            {"Used", Schedule(i).Used},
-                            {"MaxMinSet", Schedule(i).MaxMinSet},
-                            {"MaxValue", Schedule(i).MaxValue},
-                            {"MinValue", Schedule(i).MinValue},
-                            {"CurrentValue", Schedule(i).CurrentValue},
-                            {"EMSActuatedOn", Schedule(i).EMSActuatedOn},
-                            {"EMSValue", Schedule(i).EMSValue}};
+            json temp = Schedule(i);
+            Schedulejson[std::to_string(i)] = temp;
         }
-        root["Schedule"] = Schedulejson;
+        */
+        Schedulejson["lower_bound"] = Schedule.l();
+        Schedulejson["upper_bound"] = Schedule.u();
+        root["Schedule"]["data"] = Schedulejson;
 
         // save json or pass json to master json
         std::ofstream ofs("ScheduleManager.json");
         ofs << std::setw(2) << root;
         ofs.close();
     }
+
     void ProcessScheduleInput()
     {
 

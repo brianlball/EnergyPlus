@@ -745,7 +745,7 @@ namespace SimulationManager {
     void save_all_states()
     {
         ExteriorEnergyUse::save_state();
-        //ScheduleManager::save_state();
+        ScheduleManager::save_state();
     }
 
     void GetProjectData()
