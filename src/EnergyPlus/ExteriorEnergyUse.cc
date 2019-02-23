@@ -150,23 +150,32 @@ namespace ExteriorEnergyUse {
         GetExteriorEnergyInputFlag = true;
     }
 
-    void to_json(json& j, const ExteriorLightUsage& light)
+    void to_json(json &j, const ExteriorLightUsage &light)
     {
-        j = json{
-            {"SchedPtr", light.SchedPtr},
-            {"DesignLevel", light.DesignLevel},
-            {"Power", light.Power},
-            {"CurrentUse", light.CurrentUse},
-            {"ControlMode", light.ControlMode},
-            {"ManageDemand", light.ManageDemand},
-            {"DemandLimit", light.DemandLimit},
-            {"PowerActuatorOn", light.PowerActuatorOn},
-            {"SumConsumption", light.SumConsumption},
-            {"SumTimeNotZeroCons", light.SumTimeNotZeroCons}
-        };
+        j = json{{"SchedPtr", light.SchedPtr},
+                 {"DesignLevel", light.DesignLevel},
+                 {"Power", light.Power},
+                 {"CurrentUse", light.CurrentUse},
+                 {"ControlMode", light.ControlMode},
+                 {"ManageDemand", light.ManageDemand},
+                 {"DemandLimit", light.DemandLimit},
+                 {"PowerActuatorOn", light.PowerActuatorOn},
+                 {"SumConsumption", light.SumConsumption},
+                 {"SumTimeNotZeroCons", light.SumTimeNotZeroCons}};
     }
 
-    void from_json(const json& j, ExteriorLightUsage& light)
+    void to_json(json &j, const ExteriorEquipmentUsage &equip)
+    {
+        j = json{{"FuelType", equip.FuelType},
+                  {"SchedPtr", equip.SchedPtr},
+                  {"DesignLevel", equip.DesignLevel},
+                  {"Power", equip.Power},
+                  {"CurrentUse", equip.CurrentUse},
+                  {"ManageDemand", equip.ManageDemand},
+                  {"DemandLimit", equip.DemandLimit}};
+    }
+
+    void from_json(const json &j, ExteriorLightUsage &light)
     {
         j.at("SchedPtr").get_to(light.SchedPtr);
         j.at("DesignLevel").get_to(light.DesignLevel);
@@ -180,31 +189,23 @@ namespace ExteriorEnergyUse {
         j.at("SumTimeNotZeroCons").get_to(light.SumTimeNotZeroCons);
     }
 
+    void from_json(const json &j, ExteriorEquipmentUsage &equip)
+    {
+        j.at("FuelType").get_to(equip.FuelType);
+        j.at("SchedPtr").get_to(equip.SchedPtr);
+        j.at("DesignLevel").get_to(equip.DesignLevel);
+        j.at("Power").get_to(equip.Power);
+        j.at("CurrentUse").get_to(equip.CurrentUse);
+        j.at("ManageDemand").get_to(equip.ManageDemand);
+        j.at("DemandLimit").get_to(equip.DemandLimit);
+    }
+
     // load the current value of all the state variables
     void load_states()
     {
         // get saved json from master json
 
         // set these local values from json
-        json root = {// ExteriorLightUsage
-                     {"SchedPtr", ExteriorLightUsage().SchedPtr},
-                     {"DesignLevel", ExteriorLightUsage().DesignLevel},
-                     {"Power", ExteriorLightUsage().Power},
-                     {"CurrentUse", ExteriorLightUsage().CurrentUse},
-                     {"ControlMode", ExteriorLightUsage().ControlMode},
-                     {"ManageDemand", ExteriorLightUsage().ManageDemand},
-                     {"DemandLimit", ExteriorLightUsage().DemandLimit},
-                     {"PowerActuatorOn", ExteriorLightUsage().PowerActuatorOn},
-                     {"SumConsumption", ExteriorLightUsage().SumConsumption},
-                     {"SumTimeNotZeroCons", ExteriorLightUsage().SumTimeNotZeroCons},
-                     // ExteriorEquipmentUsage
-                     {"FuelType", ExteriorEquipmentUsage().FuelType},
-                     {"SchedPtr", ExteriorEquipmentUsage().SchedPtr},
-                     {"DesignLevel", ExteriorEquipmentUsage().DesignLevel},
-                     {"Power", ExteriorEquipmentUsage().Power},
-                     {"CurrentUse", ExteriorEquipmentUsage().CurrentUse},
-                     {"ManageDemand", ExteriorEquipmentUsage().ManageDemand},
-                     {"DemandLimit", ExteriorEquipmentUsage().DemandLimit}};
     }
 
     // save the current value of all the state variables
@@ -215,29 +216,24 @@ namespace ExteriorEnergyUse {
         json ExteriorLightUsagejson, ExteriorEquipmentUsagejson;
         // ExteriorLightUsage
         for (auto i = 1; i <= ExteriorLights.size(); ++i) {
-            DisplayString("ExteriorLightUsage states i: " + std::to_string(i));  //for debugging
+            DisplayString("ExteriorLightUsage states i: " + std::to_string(i)); // for debugging
             json temp = ExteriorLights(i);
-            ExteriorLightUsagejson[std::to_string(i)]=temp;
+            ExteriorLightUsagejson[std::to_string(i)] = temp;
         }
-        
-        ExteriorLightUsagejson["lower_bound"]=ExteriorLights.l();
-        ExteriorLightUsagejson["upper_bound"]=ExteriorLights.u();
+        ExteriorLightUsagejson["lower_bound"] = ExteriorLights.l();
+        ExteriorLightUsagejson["upper_bound"] = ExteriorLights.u();
         root["ExteriorLightUsage"]["data"] = ExteriorLightUsagejson;
 
         // ExteriorEquipmentUsage
         for (auto i = 1; i <= ExteriorEquipment.size(); ++i) {
             DisplayString("ExteriorEquipment states i: " + std::to_string(i));
-            ExteriorEquipmentUsagejson += {{"iterator",i},
-                                          {"Name",ExteriorEquipment(i).Name},
-                                          {"FuelType", ExteriorEquipment(i).FuelType},
-                                          {"SchedPtr", ExteriorEquipment(i).SchedPtr},
-                                          {"DesignLevel", ExteriorEquipment(i).DesignLevel},
-                                          {"Power", ExteriorEquipment(i).Power},
-                                          {"CurrentUse", ExteriorEquipment(i).CurrentUse},
-                                          {"ManageDemand", ExteriorEquipment(i).ManageDemand},
-                                          {"DemandLimit", ExteriorEquipment(i).DemandLimit}};
+            json temp = ExteriorEquipment(i);
+            ExteriorEquipmentUsagejson[std::to_string(i)] = temp;
         }
-        root["ExteriorEquipmentUsage"] = ExteriorEquipmentUsagejson;
+        ExteriorEquipmentUsagejson["lower_bound"] = ExteriorEquipment.l();
+        ExteriorEquipmentUsagejson["upper_bound"] = ExteriorEquipment.u();
+        root["ExteriorEquipmentUsage"]["data"] = ExteriorEquipmentUsagejson;
+
         // save json or pass json to master json
         std::ofstream ofs("ExteriorEnergyUseStates.json");
         ofs << std::setw(2) << root;
