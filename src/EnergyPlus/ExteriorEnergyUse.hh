@@ -154,6 +154,8 @@ namespace ExteriorEnergyUse {
     void from_json(const json &j, ExteriorLightUsage &light);
     void from_json(const json &j, ExteriorEquipmentUsage &equip);
 
+    void initialize(const json &j, ExteriorLightUsage &light);
+
     // Object Data
     extern Array1D<ExteriorLightUsage> ExteriorLights;        // Structure for Exterior Light reporting
     extern Array1D<ExteriorEquipmentUsage> ExteriorEquipment; // Structure for Exterior Equipment Reporting

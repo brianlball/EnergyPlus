@@ -200,12 +200,42 @@ namespace ExteriorEnergyUse {
         j.at("DemandLimit").get_to(equip.DemandLimit);
     }
 
+    void initialize(const json &j, ExteriorLightUsage &light)
+    {
+        light.ControlMode = j["ControlMode"];
+        light.CurrentUse = j["CurrentUse"];
+        light.DemandLimit = j["DemandLimit"];
+        light.DesignLevel = j["DesignLevel"];
+        light.ManageDemand = j["ManageDemand"];
+        light.Power = j["Power"];
+        light.PowerActuatorOn = j["PowerActuatorOn"];
+        light.SchedPtr = j["SchedPtr"];
+        light.SumConsumption = j["SumConsumption"];
+        light.SumTimeNotZeroCons = j["SumTimeNotZeroCons"];
+    }
+
     // load the current value of all the state variables
     void load_states()
     {
-        // get saved json from master json
-
-        // set these local values from json
+        json j;
+        std::ifstream ifs("ExteriorEnergyUseStates.json");
+        if (ifs.is_open()) {
+          j = json::parse(ifs);
+        }
+        //DisplayString("j: " + j.dump());
+        if (!j.empty()) {
+            //DisplayString("j['ExteriorLightUsage']['data']: " + j["ExteriorLightUsage"]["data"].dump());
+            int l=j["ExteriorLightUsage"]["data"]["lower_bound"];
+            int u=j["ExteriorLightUsage"]["data"]["upper_bound"];
+            DisplayString("l: " + std::to_string(l));
+            DisplayString("u: " + std::to_string(u));
+            for (auto i = l; i <= u; ++i) {
+              DisplayString("i: " + std::to_string(i));
+              DisplayString("j['ExteriorLightUsage']['data']['i']: " + j["ExteriorLightUsage"]["data"][std::to_string(i)].dump());
+              initialize(j["ExteriorLightUsage"]["data"][std::to_string(i)], ExteriorLights(i));
+            }
+        }
+        ifs.close();
     }
 
     // save the current value of all the state variables
