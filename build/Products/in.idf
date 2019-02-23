@@ -29,9 +29,15 @@
 
   StopSimulation,
     RUNPERIOD 1,             !- Envoironment to Stop
-    2,                      !- Stop Day
-    10,                      !- Stop Hour
-    3;                     !- Stop Time
+    365,                      !- Stop Day
+    24,                      !- Stop Hour
+    4;                     !- Stop Time
+
+  !StopSimulation,
+  !  RUNPERIOD 1,             !- Envoironment to Stop
+  !  31,                      !- Stop Day
+  !  24,                      !- Stop Hour
+  !  1;                     !- Stop Time	
 
   ScheduleTypeLimits,
     On/Off,                  !- Name

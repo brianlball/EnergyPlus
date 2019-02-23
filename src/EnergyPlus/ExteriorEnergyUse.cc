@@ -231,8 +231,11 @@ namespace ExteriorEnergyUse {
             DisplayString("u: " + std::to_string(u));
             for (auto i = l; i <= u; ++i) {
               DisplayString("i: " + std::to_string(i));
-              DisplayString("j['ExteriorLightUsage']['data']['i']: " + j["ExteriorLightUsage"]["data"][std::to_string(i)].dump());
+              //DisplayString("j['ExteriorLightUsage']['data']['i']: " + j["ExteriorLightUsage"]["data"][std::to_string(i)].dump());
+              DisplayString("j['ExteriorLightUsage']['data']['i']['SumConsumption']:" + j["ExteriorLightUsage"]["data"][std::to_string(i)]["SumConsumption"].dump());
+              DisplayString("ExteriorLights(i).SumConsumption: " + std::to_string(ExteriorLights(i).SumConsumption));
               initialize(j["ExteriorLightUsage"]["data"][std::to_string(i)], ExteriorLights(i));
+              DisplayString("ExteriorLights(i).SumConsumption: " + std::to_string(ExteriorLights(i).SumConsumption));
             }
         }
         ifs.close();

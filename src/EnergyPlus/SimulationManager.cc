@@ -598,24 +598,25 @@ namespace SimulationManager {
                     EndHourFlag = false;
 
                     for (TimeStep = 1; TimeStep <= NumOfTimeStepInHour; ++TimeStep) {
-                        // check for stop conditions -blb
+                        // check for save_all_states conditions -blb
                         if ((EnvironmentName == StopEnv) && (!WarmupFlag) && (DayOfSim == StopDay) && (HourOfDay == StopHour) &&
                             (TimeStep == StopTime)) {
                             DisplayString("Stopping Simulation at day: " + std::to_string(DayOfSim) + " hour: " + std::to_string(HourOfDay) +
                                           " time: " + std::to_string(TimeStep) + " during: " + StopEnv);
-                            // TODO write out states somewhere, somehow
+                            // save the states
                             save_all_states();
-                            return;
-                            
-                            // //set counters to end values to use the exisiting reporting functions
-                            //DayOfSim = NumOfDayInEnvrn;
-                            //HourOfDay = 24;
-                            //TimeStep = NumOfTimeStepInHour;
-                            //EndHourFlag = true;
-                            //EndDayFlag = true;
-                            //EndEnvrnFlag = true;
-                            // //TODO write out states somewhere, somehow
-                            //break;
+                            //exit without calling reporting
+                            //return;
+                            /*
+                            //set counters to end values to use the exisiting reporting functions
+                            DayOfSim = NumOfDayInEnvrn;
+                            HourOfDay = 24;
+                            TimeStep = NumOfTimeStepInHour;
+                            EndHourFlag = true;
+                            EndDayFlag = true;
+                            EndEnvrnFlag = true;
+                            break;
+                            */
                             
                         }
                         if (AnySlabsInModel || AnyBasementsInModel) {
