@@ -747,6 +747,7 @@ namespace SimulationManager {
     {
         //ExteriorEnergyUse::save_state();
         //ScheduleManager::save_state();
+        OutputReportTabular::ResetTabularReports();
         ExteriorEnergyUse::load_states();  //test load function 
     }
 

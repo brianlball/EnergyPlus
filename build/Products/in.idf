@@ -29,7 +29,7 @@
 
   StopSimulation,
     RUNPERIOD 1,             !- Envoironment to Stop
-    365,                      !- Stop Day
+    334,                      !- Stop Day
     24,                      !- Stop Hour
     4;                     !- Stop Time
 

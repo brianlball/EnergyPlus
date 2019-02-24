@@ -239,6 +239,17 @@ namespace ExteriorEnergyUse {
             }
         }
         ifs.close();
+        /*
+        //do we need to reset the predefined reports?  -this doenst work
+        OutputReportPredefined::pdstExtLite = 0;
+        OutputReportPredefined::pdchExLtPower = 0;
+        OutputReportPredefined::pdchExLtClock = 0;
+        OutputReportPredefined::pdchExLtSchd = 0;
+        OutputReportPredefined::pdchExLtAvgHrSchd = 0;
+        OutputReportPredefined::pdchExLtAvgHrOper = 0;
+        OutputReportPredefined::pdchExLtFullLoadHrs = 0;
+        OutputReportPredefined::pdchExLtConsump = 0;
+        */
     }
 
     // save the current value of all the state variables
