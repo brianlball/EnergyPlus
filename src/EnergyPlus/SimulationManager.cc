@@ -483,12 +483,16 @@ namespace SimulationManager {
         int MinInt;
         int Num;
         using namespace DataIPShortCuts;
+        // Simulation States
+        bool loadCheck(true);   //use this to check and set load conditions only once
         std::string StopEnv("");
+        std::string StatesSave("");
+        std::string StatesStop("");
         int StopDay(9999);
         int StopHour(9999);
         int StopTime(9999);
-        // look for StopSimulation object in idf
-        CurrentModuleObject = "StopSimulation";
+        // look for SimulationStates object in idf
+        CurrentModuleObject = "SimulationStates";
         int num = inputProcessor->getNumObjectsFound(CurrentModuleObject);
         if (num == 1) {
             inputProcessor->getObjectItem(CurrentModuleObject,
@@ -503,11 +507,13 @@ namespace SimulationManager {
                                           cAlphaFieldNames,
                                           cNumericFieldNames);
             StopEnv = Alphas(1);
+            StatesSave = Alphas(2);
+            StatesStop = Alphas(3);
             StopDay = Number(1);
             StopHour = Number(2);
             StopTime = Number(3);
-            DisplayString("Will Stop Simuation at day: " + std::to_string(StopDay) + " hour: " + std::to_string(StopHour) +
-                          " time: " + std::to_string(StopTime) + " during: " + StopEnv);
+            DisplayString("Will " + StatesSave + " Simuation at day: " + std::to_string(StopDay) + " hour: " + std::to_string(StopHour) +
+                          " time: " + std::to_string(StopTime) + " during: " + StopEnv + " and will " + StatesStop + " the simulation.");
         }
 
         while (Available) {
@@ -551,12 +557,15 @@ namespace SimulationManager {
             ManageEMS(emsCallFromBeginNewEvironment, anyEMSRan); // calling point
 
             while ((DayOfSim < NumOfDayInEnvrn) || (WarmupFlag)) { // Begin day loop ...
-
                 if (sqlite) sqlite->sqliteBegin(); // setup for one transaction per day
 
                 ++DayOfSim;
                 gio::write(DayOfSimChr, fmtLD) << DayOfSim;
                 strip(DayOfSimChr);
+                //debug
+                if (!WarmupFlag) {
+                    DisplayString("DayOfSim: " + DayOfSimChr);
+                }
                 if (!WarmupFlag) {
                     ++CurrentOverallSimDay;
                     DisplaySimDaysProgress(CurrentOverallSimDay, TotalOverallSimDays);
@@ -599,25 +608,34 @@ namespace SimulationManager {
 
                     for (TimeStep = 1; TimeStep <= NumOfTimeStepInHour; ++TimeStep) {
                         // check for save_all_states conditions -blb
-                        if ((EnvironmentName == StopEnv) && (!WarmupFlag) && (DayOfSim == StopDay) && (HourOfDay == StopHour) &&
-                            (TimeStep == StopTime)) {
-                            DisplayString("Stopping Simulation at day: " + std::to_string(DayOfSim) + " hour: " + std::to_string(HourOfDay) +
-                                          " time: " + std::to_string(TimeStep) + " during: " + StopEnv);
-                            // save the states
-                            save_all_states();
-                            //exit without calling reporting
-                            //return;
-                            /*
-                            //set counters to end values to use the exisiting reporting functions
-                            DayOfSim = NumOfDayInEnvrn;
-                            HourOfDay = 24;
-                            TimeStep = NumOfTimeStepInHour;
-                            EndHourFlag = true;
-                            EndDayFlag = true;
-                            EndEnvrnFlag = true;
-                            break;
-                            */
-                            
+                        if (StatesSave == "SAVE") {
+                            if ((EnvironmentName == StopEnv) && (!WarmupFlag) && (DayOfSim == StopDay) && (HourOfDay == StopHour) &&
+                                (TimeStep == StopTime)) {
+                                DisplayString(StatesSave + "ing Simuation at day: " + std::to_string(StopDay) + " hour: " + std::to_string(StopHour) +
+                                              " time: " + std::to_string(StopTime) + " during: " + StopEnv + " and will " + StatesStop +
+                                              " the simulation.");
+                                //save the states
+                                save_all_states();
+                                //determine stop/continue status
+                                if (StatesStop == "STOP") {
+                                    // exit without calling reporting
+                                    // return;
+
+                                    // set counters to end values to use the exisiting reporting functions
+                                    DayOfSim = NumOfDayInEnvrn;
+                                    HourOfDay = 24;
+                                    TimeStep = NumOfTimeStepInHour;
+                                    EndHourFlag = true;
+                                    EndDayFlag = true;
+                                    EndEnvrnFlag = true;
+                                    break;
+                                }
+                            }
+                        } else if ((EnvironmentName == StopEnv) && (!WarmupFlag) && loadCheck && (StatesSave == "LOAD")) {
+                            loadCheck = false; //set to false so we only load once
+                            //load the states
+                            load_all_states();
+                            //any other load checks or sets?
                         }
                         if (AnySlabsInModel || AnyBasementsInModel) {
                             SimulateGroundDomains(false);
@@ -745,10 +763,16 @@ namespace SimulationManager {
 
     void save_all_states()
     {
-        //ExteriorEnergyUse::save_state();
-        //ScheduleManager::save_state();
-        OutputReportTabular::ResetTabularReports();
-        ExteriorEnergyUse::load_states();  //test load function 
+        ExteriorEnergyUse::save_state();
+        ScheduleManager::save_state();
+        DataGlobals::save_state();
+        // OutputReportTabular::ResetTabularReports();
+    }
+
+    void load_all_states()
+    {
+        DataGlobals::load_states();
+        ExteriorEnergyUse::load_states(); // test load function
     }
 
     void GetProjectData()

@@ -52,12 +52,18 @@
 #include <iosfwd>
 #include <string>
 
+#include <nlohmann/json.hpp>
+
 // EnergyPlus Headers
 #include <EnergyPlus.hh>
 
 namespace EnergyPlus {
 
 namespace DataGlobals {
+
+    // Using/Aliasing
+    //json format for states
+    using json = nlohmann::json;
 
     // Data
     // -only module should be available to other modules and routines.
@@ -301,6 +307,12 @@ namespace DataGlobals {
     // Clears the global data in DataGlobals.
     // Needed for unit tests, should not be normally called.
     void clear_state();
+
+    // save the current value of all the state variables
+    void save_state();
+    // save the current value of all the state variables
+    void load_states();
+
 
 } // namespace DataGlobals
 

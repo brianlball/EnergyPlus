@@ -27,18 +27,30 @@
     7,                      !- Maximum Number of Warmup Days
     6;                       !- Minimum Number of Warmup Days
 
-  StopSimulation,
+  SimulationStates,
     RUNPERIOD 1,             !- Envoironment to Stop
+    load,                    !- Save or Load States
+    continue,                !- Continue or Stop
     334,                      !- Stop Day
     24,                      !- Stop Hour
     4;                     !- Stop Time
 
-  !StopSimulation,
+  !SimulationStates,
   !  RUNPERIOD 1,             !- Envoironment to Stop
+  !	 save,                    !- Save or Load States
+  !	 stop,                    !- Continue or Stop
   !  31,                      !- Stop Day
   !  24,                      !- Stop Hour
   !  1;                     !- Stop Time	
 
+  Output:Variable,*,Exterior Lights Electric Energy,hourly;
+  Output:Variable,*,Exterior Lights Electric Energy,daily;
+  Output:Variable,*,Exterior Lights Electric Energy,monthly;
+  Output:Variable,*,Exterior Lights Electric Energy,RunPeriod;
+  Output:Variable,*,Exterior Lights Electric Energy,annual;
+  Output:SQLite, Simple;
+  Output:Meter:Cumulative,ExteriorLights:Electricity;
+	
   ScheduleTypeLimits,
     On/Off,                  !- Name
     0,                       !- Lower Limit Value
@@ -64,8 +76,8 @@
     500,                    !- Design Level {W}
     ScheduleNameOnly;        !- Control Option
 	
-  Output:JSON,
-    TimeSeriesAndTabular;
+  !Output:JSON,
+  !  TimeSeriesAndTabular;
 	
   GlobalGeometryRules,
     UpperLeftCorner,         !- Starting Vertex Position

@@ -47,12 +47,15 @@
 
 // C++ Headers
 #include <ostream>
+#include <fstream>
+#include <string>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/numeric.hh>
 
 // EnergyPlus Headers
 #include <DataGlobals.hh>
+#include <DisplayRoutines.hh>
 
 namespace EnergyPlus {
 
@@ -358,6 +361,48 @@ namespace DataGlobals {
         err_stream = nullptr;
         eio_stream = nullptr;
         delightin_stream = nullptr;
+    }
+
+    // load the current value of all the state variables
+    void load_states()
+    {
+        json j;
+        std::ifstream ifs("DataGlobals.json");
+        if (ifs.is_open()) {
+          j = json::parse(ifs);
+        }
+        //DisplayString("j: " + j.dump());
+        if (!j.empty()) {
+            //DisplayString("j['DataGlobals']: " + j["DataGlobals"].dump());
+            DisplayString("Current: DayOfSim: " + std::to_string(DayOfSim));
+            DayOfSim = j["DataGlobals"]["data"]["DayOfSim"];
+            HourOfDay = j["DataGlobals"]["data"]["HourOfDay"];
+            TimeStep = j["DataGlobals"]["data"]["TimeStep"];
+            DisplayString("Loaded: DataGlobal: DayOfSim: " + std::to_string(DayOfSim));
+            DisplayString("Loaded: DataGlobal: HourOfDay: " + std::to_string(HourOfDay));
+            DisplayString("Loaded: DataGlobal: TimeStep: " + std::to_string(TimeStep));
+        }
+        ifs.close();
+    }
+
+    // save the current value of all the state variables
+    void save_state()
+    {
+        // setup json to save
+        json root;
+        json dataGlobaljson;
+        DisplayString("Saving DataGlobals: DayOfSim: " + std::to_string(DayOfSim));
+        DisplayString("Saving DataGlobals: HourOfDay: " + std::to_string(HourOfDay));
+        DisplayString("Saving DataGlobals: TimeStep: " + std::to_string(TimeStep));
+        dataGlobaljson["DayOfSim"] = DayOfSim;
+        dataGlobaljson["HourOfDay"] = HourOfDay;
+        dataGlobaljson["TimeStep"] = TimeStep;
+        root["DataGlobals"]["data"] = dataGlobaljson;
+
+        // save json or pass json to master json
+        std::ofstream ofs("DataGlobals.json");
+        ofs << std::setw(2) << root;
+        ofs.close();
     }
 
 } // namespace DataGlobals

@@ -227,15 +227,15 @@ namespace ExteriorEnergyUse {
             //DisplayString("j['ExteriorLightUsage']['data']: " + j["ExteriorLightUsage"]["data"].dump());
             int l=j["ExteriorLightUsage"]["data"]["lower_bound"];
             int u=j["ExteriorLightUsage"]["data"]["upper_bound"];
-            DisplayString("l: " + std::to_string(l));
-            DisplayString("u: " + std::to_string(u));
+            //DisplayString("l: " + std::to_string(l));
+            //DisplayString("u: " + std::to_string(u));
             for (auto i = l; i <= u; ++i) {
-              DisplayString("i: " + std::to_string(i));
+              //DisplayString("i: " + std::to_string(i));
               //DisplayString("j['ExteriorLightUsage']['data']['i']: " + j["ExteriorLightUsage"]["data"][std::to_string(i)].dump());
-              DisplayString("j['ExteriorLightUsage']['data']['i']['SumConsumption']:" + j["ExteriorLightUsage"]["data"][std::to_string(i)]["SumConsumption"].dump());
-              DisplayString("ExteriorLights(i).SumConsumption: " + std::to_string(ExteriorLights(i).SumConsumption));
+              //DisplayString("j['ExteriorLightUsage']['data']['i']['SumConsumption']:" + j["ExteriorLightUsage"]["data"][std::to_string(i)]["SumConsumption"].dump());
+              DisplayString("Current: ExteriorLights(i).SumConsumption: " + std::to_string(ExteriorLights(i).SumConsumption));
               initialize(j["ExteriorLightUsage"]["data"][std::to_string(i)], ExteriorLights(i));
-              DisplayString("ExteriorLights(i).SumConsumption: " + std::to_string(ExteriorLights(i).SumConsumption));
+              DisplayString("Loaded: ExteriorLights(i).SumConsumption: " + std::to_string(ExteriorLights(i).SumConsumption));
             }
         }
         ifs.close();
