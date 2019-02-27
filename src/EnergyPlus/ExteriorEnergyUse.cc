@@ -217,6 +217,7 @@ namespace ExteriorEnergyUse {
     // load the current value of all the state variables
     void load_states()
     {
+        static Real64 sumDesignLevel(0.0); // for predefined report of design level total
         json j;
         //std::string temp;
         std::ifstream ifs("ExteriorEnergyUseStates.json");
@@ -245,7 +246,34 @@ namespace ExteriorEnergyUse {
               DisplayString("Current: ExteriorLights(i).SumConsumption: " + std::to_string(ExteriorLights(i).SumConsumption));
               initialize(j["ExteriorLightUsage"]["data"][std::to_string(i)], ExteriorLights(i));
               DisplayString("Loaded: ExteriorLights(i).SumConsumption: " + std::to_string(ExteriorLights(i).SumConsumption));
+              //test
+              SetupOutputVariable("Exterior Lights Electric Power", OutputProcessor::Unit::W, ExteriorLights(i).Power, "Zone", "Average", ExteriorLights(i).Name);
+
+              SetupOutputVariable("Exterior Lights Electric Energy",
+                                OutputProcessor::Unit::J,
+                                ExteriorLights(i).CurrentUse,
+                                "Zone",
+                                "Sum",
+                                ExteriorLights(i).Name,
+                                _,
+                                "Electricity",
+                                "Exterior Lights",
+                                "General");
+
+                // entries for predefined tables
+                OutputReportPredefined::PreDefTableEntry(OutputReportPredefined::pdchExLtPower, ExteriorLights(i).Name, ExteriorLights(i).DesignLevel);
+                sumDesignLevel += ExteriorLights(i).DesignLevel;
+                if (ExteriorLights(i).ControlMode == AstroClockOverride) { // photocell/schedule
+                    OutputReportPredefined::PreDefTableEntry(OutputReportPredefined::pdchExLtClock, ExteriorLights(i).Name, "AstronomicalClock");
+                    OutputReportPredefined::PreDefTableEntry(OutputReportPredefined::pdchExLtSchd, ExteriorLights(i).Name, "-");
+                } else {
+                    OutputReportPredefined::PreDefTableEntry(OutputReportPredefined::pdchExLtClock, ExteriorLights(i).Name, "Schedule");
+                    OutputReportPredefined::PreDefTableEntry(OutputReportPredefined::pdchExLtSchd, ExteriorLights(i).Name, ScheduleManager::GetScheduleName(ExteriorLights(i).SchedPtr));
+                }
+                //end-test
+
             }
+            OutputReportPredefined::PreDefTableEntry(OutputReportPredefined::pdchExLtPower, "Exterior Lighting Total", sumDesignLevel);
             // ExteriorEquipmentUsage
             //TODO
         }
