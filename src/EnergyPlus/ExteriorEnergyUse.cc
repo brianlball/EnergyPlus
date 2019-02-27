@@ -246,7 +246,8 @@ namespace ExteriorEnergyUse {
               DisplayString("Current: ExteriorLights(i).SumConsumption: " + std::to_string(ExteriorLights(i).SumConsumption));
               initialize(j["ExteriorLightUsage"]["data"][std::to_string(i)], ExteriorLights(i));
               DisplayString("Loaded: ExteriorLights(i).SumConsumption: " + std::to_string(ExteriorLights(i).SumConsumption));
-              //test
+
+              //need to setup OutputVariables like whats done in GetExteriorEnergyUseInput() without the calls to idf objects
               SetupOutputVariable("Exterior Lights Electric Power", OutputProcessor::Unit::W, ExteriorLights(i).Power, "Zone", "Average", ExteriorLights(i).Name);
 
               SetupOutputVariable("Exterior Lights Electric Energy",
@@ -278,17 +279,6 @@ namespace ExteriorEnergyUse {
             //TODO
         }
         ifs.close();
-        /*
-        //do we need to reset the predefined reports?  -this doenst work
-        OutputReportPredefined::pdstExtLite = 0;
-        OutputReportPredefined::pdchExLtPower = 0;
-        OutputReportPredefined::pdchExLtClock = 0;
-        OutputReportPredefined::pdchExLtSchd = 0;
-        OutputReportPredefined::pdchExLtAvgHrSchd = 0;
-        OutputReportPredefined::pdchExLtAvgHrOper = 0;
-        OutputReportPredefined::pdchExLtFullLoadHrs = 0;
-        OutputReportPredefined::pdchExLtConsump = 0;
-        */
     }
 
     // save the current value of all the state variables
