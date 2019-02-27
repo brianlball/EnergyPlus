@@ -218,15 +218,24 @@ namespace ExteriorEnergyUse {
     void load_states()
     {
         json j;
+        //std::string temp;
         std::ifstream ifs("ExteriorEnergyUseStates.json");
         if (ifs.is_open()) {
           j = json::parse(ifs);
         }
         //DisplayString("j: " + j.dump());
         if (!j.empty()) {
+            auto temp = j["ExteriorEnergyUse"]["data"]["GetExteriorEnergyInputFlag"];
+            //GetExteriorEnergyInputFlag = temp.get<bool>();
+            if (temp == true) {
+              GetExteriorEnergyInputFlag = true;
+            } else {
+              GetExteriorEnergyInputFlag = false;
+            }
+            // ExteriorLightUsage
             //DisplayString("j['ExteriorLightUsage']['data']: " + j["ExteriorLightUsage"]["data"].dump());
             int l=j["ExteriorLightUsage"]["data"]["lower_bound"];
-            int u=j["ExteriorLightUsage"]["data"]["upper_bound"];
+            int u=j["ExteriorLightUsage"]["data"]["upper_bound"];            
             //DisplayString("l: " + std::to_string(l));
             //DisplayString("u: " + std::to_string(u));
             for (auto i = l; i <= u; ++i) {
@@ -237,6 +246,8 @@ namespace ExteriorEnergyUse {
               initialize(j["ExteriorLightUsage"]["data"][std::to_string(i)], ExteriorLights(i));
               DisplayString("Loaded: ExteriorLights(i).SumConsumption: " + std::to_string(ExteriorLights(i).SumConsumption));
             }
+            // ExteriorEquipmentUsage
+            //TODO
         }
         ifs.close();
         /*
@@ -258,6 +269,8 @@ namespace ExteriorEnergyUse {
         // setup json to save
         json root, temp;
         json ExteriorLightUsagejson, ExteriorEquipmentUsagejson;
+        //this is needed to keep structs from getting reinitialized in ManageExteriorEnergyUse() below
+        root["ExteriorEnergyUse"]["GetExteriorEnergyInputFlag"] = GetExteriorEnergyInputFlag;
         // ExteriorLightUsage
         DisplayString("ExteriorLights.l(): " + std::to_string(ExteriorLights.l()));
         DisplayString("ExteriorLights.u(): " + std::to_string(ExteriorLights.u()));
