@@ -379,9 +379,9 @@ namespace DataGlobals {
         if (!j.empty()) {
             //DisplayString("j['DataGlobals']: " + j["DataGlobals"].dump());
             DisplayString("Current: DayOfSim: " + std::to_string(DayOfSim));
-            DayOfSim = j["DataGlobals"]["data"]["DayOfSim"];
-            HourOfDay = j["DataGlobals"]["data"]["HourOfDay"];
-            TimeStep = j["DataGlobals"]["data"]["TimeStep"];
+            DayOfSim = j["DataGlobals"]["data"]["DayOfSim"].get<int>();
+            HourOfDay = j["DataGlobals"]["data"]["HourOfDay"].get<int>();
+            TimeStep = j["DataGlobals"]["data"]["TimeStep"].get<int>();
             DisplayString("Loaded: DataGlobal: DayOfSim: " + std::to_string(DayOfSim));
             DisplayString("Loaded: DataGlobal: HourOfDay: " + std::to_string(HourOfDay));
             DisplayString("Loaded: DataGlobal: TimeStep: " + std::to_string(TimeStep));

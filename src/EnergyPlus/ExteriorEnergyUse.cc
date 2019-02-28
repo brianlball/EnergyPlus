@@ -244,8 +244,10 @@ namespace ExteriorEnergyUse {
               //DisplayString("j['ExteriorLightUsage']['data']['i']: " + j["ExteriorLightUsage"]["data"][std::to_string(i)].dump());
               //DisplayString("j['ExteriorLightUsage']['data']['i']['SumConsumption']:" + j["ExteriorLightUsage"]["data"][std::to_string(i)]["SumConsumption"].dump());
               DisplayString("Current: ExteriorLights(i).SumConsumption: " + std::to_string(ExteriorLights(i).SumConsumption));
-              initialize(j["ExteriorLightUsage"]["data"][std::to_string(i)], ExteriorLights(i));
-              DisplayString("Loaded: ExteriorLights(i).SumConsumption: " + std::to_string(ExteriorLights(i).SumConsumption));
+              //initialize(j["ExteriorLightUsage"]["data"][std::to_string(i)], ExteriorLights(i));
+			  //below takes the place of initialize... voodoo..
+			  ExteriorLights(i) = j["ExteriorLightUsage"]["data"][std::to_string(i)];
+			  DisplayString("Loaded: ExteriorLights(i).SumConsumption: " + std::to_string(ExteriorLights(i).SumConsumption));
 
               //need to setup OutputVariables like whats done in GetExteriorEnergyUseInput() without the calls to idf objects
               SetupOutputVariable("Exterior Lights Electric Power", OutputProcessor::Unit::W, ExteriorLights(i).Power, "Zone", "Average", ExteriorLights(i).Name);
