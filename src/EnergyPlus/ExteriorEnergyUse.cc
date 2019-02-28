@@ -202,16 +202,16 @@ namespace ExteriorEnergyUse {
 
     void initialize(const json &j, ExteriorLightUsage &light)
     {
-        light.ControlMode = j["ControlMode"];
-        light.CurrentUse = j["CurrentUse"];
-        light.DemandLimit = j["DemandLimit"];
-        light.DesignLevel = j["DesignLevel"];
-        light.ManageDemand = j["ManageDemand"];
-        light.Power = j["Power"];
-        light.PowerActuatorOn = j["PowerActuatorOn"];
-        light.SchedPtr = j["SchedPtr"];
-        light.SumConsumption = j["SumConsumption"];
-        light.SumTimeNotZeroCons = j["SumTimeNotZeroCons"];
+        light.ControlMode = j["ControlMode"].get<int>();
+        light.CurrentUse = j["CurrentUse"].get<double>();
+        light.DemandLimit = j["DemandLimit"].get<double>();
+        light.DesignLevel = j["DesignLevel"].get<double>();
+        light.ManageDemand = j["ManageDemand"].get<bool>();
+        light.Power = j["Power"].get<double>();
+        light.PowerActuatorOn = j["PowerActuatorOn"].get<bool>();
+        light.SchedPtr = j["SchedPtr"].get<int>();
+        light.SumConsumption = j["SumConsumption"].get<double>();
+        light.SumTimeNotZeroCons = j["SumTimeNotZeroCons"].get<double>();
     }
 
     // load the current value of all the state variables
@@ -290,11 +290,11 @@ namespace ExteriorEnergyUse {
         //this is needed to keep structs from getting reinitialized in ManageExteriorEnergyUse() below
         root["ExteriorEnergyUse"]["GetExteriorEnergyInputFlag"] = GetExteriorEnergyInputFlag;
         // ExteriorLightUsage
-        DisplayString("ExteriorLights.l(): " + std::to_string(ExteriorLights.l()));
-        DisplayString("ExteriorLights.u(): " + std::to_string(ExteriorLights.u()));
-        DisplayString("ExteriorLights.size(): " + std::to_string(ExteriorLights.size()));
+        //DisplayString("ExteriorLights.l(): " + std::to_string(ExteriorLights.l()));
+        //DisplayString("ExteriorLights.u(): " + std::to_string(ExteriorLights.u()));
+        //DisplayString("ExteriorLights.size(): " + std::to_string(ExteriorLights.size()));
         for (auto i = ExteriorLights.l(); i <= ExteriorLights.u(); ++i) {
-            DisplayString("ExteriorLightUsage states i: " + std::to_string(i)); // for debugging
+            //DisplayString("ExteriorLightUsage states i: " + std::to_string(i)); // for debugging
             temp = ExteriorLights(i);
             ExteriorLightUsagejson[std::to_string(i)] = temp;
         }
@@ -303,11 +303,11 @@ namespace ExteriorEnergyUse {
         root["ExteriorLightUsage"]["data"] = ExteriorLightUsagejson;
 
         // ExteriorEquipmentUsage
-        DisplayString("ExteriorEquipment.l(): " + std::to_string(ExteriorEquipment.l()));
-        DisplayString("ExteriorEquipment.u(): " + std::to_string(ExteriorEquipment.u()));
-        DisplayString("ExteriorEquipment.size(): " + std::to_string(ExteriorEquipment.size()));
+        //DisplayString("ExteriorEquipment.l(): " + std::to_string(ExteriorEquipment.l()));
+        //DisplayString("ExteriorEquipment.u(): " + std::to_string(ExteriorEquipment.u()));
+        //DisplayString("ExteriorEquipment.size(): " + std::to_string(ExteriorEquipment.size()));
         for (auto i = ExteriorEquipment.l(); i <= ExteriorEquipment.u(); ++i) {
-            DisplayString("ExteriorEquipment states i: " + std::to_string(i));
+            //DisplayString("ExteriorEquipment states i: " + std::to_string(i));
             temp = ExteriorEquipment(i);
             ExteriorEquipmentUsagejson[std::to_string(i)] = temp;
         }

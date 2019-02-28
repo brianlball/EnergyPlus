@@ -29,10 +29,10 @@
 
   SimulationStates,
     RUNPERIOD 1,             !- Envoironment to Stop
-    save,                    !- Save or Load States
-    stop,                !- Continue or Stop
-    1,                      !- Stop Day
-    12,                      !- Stop Hour
+    load,                    !- Save or Load States
+    continue,                !- Continue or Stop
+    182,                      !- Stop Day
+    24,                      !- Stop Hour
     4;                     !- Stop Time	
 	
  ! SimulationStates,
@@ -183,7 +183,7 @@
     No,                      !- Do System Sizing Calculation
     No,                      !- Do Plant Sizing Calculation
     Yes,                     !- Run Simulation for Sizing Periods
-    No;                      !- Run Simulation for Weather File Run Periods
+    Yes;                      !- Run Simulation for Weather File Run Periods
 
   Output:VariableDictionary,Regular;
 
