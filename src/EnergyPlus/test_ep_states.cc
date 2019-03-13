@@ -47,34 +47,99 @@
 
 #include "EnergyPlusPgm.hh"
 #include <iostream>
+#include <FileSystem.hh>
 
 void message_callback_handler(std::string const &message)
 {
-    std::cout << "EnergyPlusLibrary (message): " << message << std::endl;
+    std::cout << "EnergyPlusStateTest (message): " << message << std::endl;
 }
 
 void progress_callback_handler(int const progress)
 {
-    std::cout << "EnergyPlusLibrary (progress): " << progress << std::endl;
+    std::cout << "EnergyPlusStateTest (progress): " << progress << std::endl;
 }
 
-int main(int argc, char *argv[])
+void run_sims(std::string const directory, std::string const modelName)
 {
-    std::cout << "Using EnergyPlus as a library." << std::endl;
-    StoreMessageCallback(message_callback_handler);
-    StoreProgressCallback(progress_callback_handler);
-
+    using namespace EnergyPlus::FileSystem;
     int status(EXIT_FAILURE);
-    if (argc < 2) {
-        std::cout << "Call this with a path to run EnergyPlus as the only argument" << std::endl;
-        return EXIT_FAILURE;
-    } else {
-        status = RunEnergyPlus(argv[1]);
-    }
+    //make tst_ModelName test directory
+    std::string tstDir(directory + std::string("/tst_") + modelName);
+    makeDirectory(tstDir);
+    //make 3 run dirs
+    std::string tstDirFull(tstDir + std::string("/full"));
+    std::string tstDirFirst(tstDir + std::string("/first"));
+    std::string tstDirLast(tstDir + std::string("/last"));
+    makeDirectory(tstDirFull);
+    makeDirectory(tstDirFirst);
+    makeDirectory(tstDirLast);
+    //std::cout << "COPYING: " << directory + std::string("/") + modelName + tstDirFull + std::string("/in.idf");
+    //copy files to the 3 directories
+    linkFile(directory + std::string("/") + modelName + std::string(".idf"), tstDirFull + std::string("/in.idf"));
+    linkFile(directory + std::string("/in.epw") , tstDirFull + std::string("/in.epw"));
+    linkFile(directory + std::string("/") + modelName + std::string(".idf"), tstDirFirst + std::string("/in.idf"));
+    linkFile(directory + std::string("/in.epw"), tstDirFirst + std::string("/in.epw"));
+    linkFile(directory + std::string("/") + modelName + std::string(".idf"), tstDirLast + std::string("/in.idf"));
+    linkFile(directory + std::string("/in.epw"), tstDirLast + std::string("/in.epw"));
+    //run full runperiod
+    status = RunEnergyPlus(tstDirFull);
+
     if (!std::cin.good()) std::cin.clear();
     if (!std::cerr.good()) std::cerr.clear();
     if (!std::cout.good()) std::cout.clear();
     std::cerr << "Standard error is still available for use" << std::endl;
     std::cout << "Standard output is still available for use" << std::endl;
-    return status;
+    //run first half TODO
+    status = RunEnergyPlus(tstDirFirst);
+
+    if (!std::cin.good()) std::cin.clear();
+    if (!std::cerr.good()) std::cerr.clear();
+    if (!std::cout.good()) std::cout.clear();
+    std::cerr << "Standard error is still available for use" << std::endl;
+    std::cout << "Standard output is still available for use" << std::endl;
+    //run last half TODO
+    status = RunEnergyPlus(tstDirLast);
+
+    if (!std::cin.good()) std::cin.clear();
+    if (!std::cerr.good()) std::cerr.clear();
+    if (!std::cout.good()) std::cout.clear();
+    std::cerr << "Standard error is still available for use" << std::endl;
+    std::cout << "Standard output is still available for use" << std::endl;
+
+}
+
+int main(int argc, char *argv[])
+{
+    //using namespace EnergyPlus;
+    using namespace EnergyPlus::FileSystem;
+
+    std::cout << "Testing EnergyPlus reset states." << std::endl;
+    StoreMessageCallback(message_callback_handler);
+    StoreProgressCallback(progress_callback_handler);
+
+    
+    if (argc < 3) {
+        std::cout << "Call this with 1: a path to EnergyPlus files, 2: name of file" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    if (directoryExists(argv[1])) {
+        std::string filePath(argv[1] + std::string("/") + argv[2] + std::string(".idf"));
+        if (fileExists(filePath)) {
+            run_sims(argv[1],argv[2]);
+        } else {
+          std::cout << "argument 2: 'name of file' is not good." << std::endl;
+            return EXIT_FAILURE;
+        }
+    } else {
+        std::cout << "argument 1: 'a path to EnergyPlus files' is not good." << std::endl;
+        return EXIT_FAILURE;
+    }
+    
+    if (!std::cin.good()) std::cin.clear();
+    if (!std::cerr.good()) std::cerr.clear();
+    if (!std::cout.good()) std::cout.clear();
+    std::cerr << "Standard error is still available for use" << std::endl;
+    std::cout << "Standard output is still available for use" << std::endl;
+    //return status;
 }

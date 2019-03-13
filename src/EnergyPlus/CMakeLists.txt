@@ -706,6 +706,17 @@ if( BUILD_TESTING )
            -DIDF_FILE=1ZoneUncontrolled.idf
            -DEPW_FILE=USA_CO_Golden-NREL.724666_TMY3.epw
            -P ${CMAKE_SOURCE_DIR}/cmake/RunCallbackTest.cmake)
+
+  # Build the test for States
+  add_executable( TestResetStates test_ep_states.cc )
+  target_link_libraries( TestResetStates energyplusapi )
+  add_test(NAME "integration.TestResetStates"
+           COMMAND ${CMAKE_COMMAND}
+           -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
+           -DBINARY_DIR=${CMAKE_BINARY_DIR}
+           -DIDF_FILE=Minimal_json.idf
+           -DEPW_FILE=in.epw
+           -P ${CMAKE_SOURCE_DIR}/cmake/RunStatesTest.cmake)
 endif()
 
 if(UNIX AND NOT APPLE)
