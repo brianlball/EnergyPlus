@@ -136,6 +136,7 @@ set( test_src
   PVWatts.unit.cc
   ReportCoilSelection.unit.cc
   ReportSizingManager.unit.cc
+  ResetState.unit.cc
   RoomAirflowNetwork.unit.cc
   RoomAirModelUserTempPattern.unit.cc
   RunPeriod.unit.cc
