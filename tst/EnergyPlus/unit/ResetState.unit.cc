@@ -66,8 +66,8 @@
 
 #include "Fixtures/EnergyPlusFixture.hh"
 #include <FileSystem.hh>
-#include "EnergyPlusAPI.hh"
-#include "EnergyPlusPgm.hh"
+#include <EnergyPlusAPI.hh>
+#include <EnergyPlusPgm.hh>
 
 using namespace EnergyPlus;
 using namespace EnergyPlus::WeatherManager;
@@ -77,7 +77,7 @@ using namespace EnergyPlus::FileSystem;
 TEST_F(EnergyPlusFixture, States_ResetStates)
 {
     std::string directory("C:/Projects/EnergyPlus_fork/testfiles/BriansFiles");
-    std::string modelName("Minimal_lights");
+    std::string modelName("Minimal_json");
 
     int status(EXIT_FAILURE);
     // make tst_ModelName test directory
@@ -100,6 +100,7 @@ TEST_F(EnergyPlusFixture, States_ResetStates)
     linkFile(directory + std::string("/in.epw"), tstDirLast + std::string("/in.epw"));
     // run full runperiod
     status = RunEnergyPlus(tstDirFull);
+	clear_all_states();
 
     if (!std::cin.good()) std::cin.clear();
     if (!std::cerr.good()) std::cerr.clear();
@@ -124,4 +125,54 @@ TEST_F(EnergyPlusFixture, States_ResetStates)
     std::cout << "Standard output is still available for use" << std::endl;
 }
 
+TEST_F(EnergyPlusFixture, States_ResetStates2)
+{
+	std::string directory("C:/Projects/EnergyPlus_fork/testfiles/BriansFiles");
+	std::string modelName("Minimal_json");
+
+	int status(EXIT_FAILURE);
+	// make tst_ModelName test directory
+	std::string tstDir(directory + std::string("/tst_") + modelName);
+	makeDirectory(tstDir);
+	// make 3 run dirs
+	std::string tstDirFull(tstDir + std::string("/full"));
+	std::string tstDirFirst(tstDir + std::string("/first"));
+	std::string tstDirLast(tstDir + std::string("/last"));
+	makeDirectory(tstDirFull);
+	makeDirectory(tstDirFirst);
+	makeDirectory(tstDirLast);
+	// std::cout << "COPYING: " << directory + std::string("/") + modelName + tstDirFull + std::string("/in.idf");
+	// copy files to the 3 directories
+	linkFile(directory + std::string("/") + modelName + std::string(".idf"), tstDirFull + std::string("/in.idf"));
+	linkFile(directory + std::string("/in.epw"), tstDirFull + std::string("/in.epw"));
+	linkFile(directory + std::string("/") + modelName + std::string(".idf"), tstDirFirst + std::string("/in.idf"));
+	linkFile(directory + std::string("/in.epw"), tstDirFirst + std::string("/in.epw"));
+	linkFile(directory + std::string("/") + modelName + std::string(".idf"), tstDirLast + std::string("/in.idf"));
+	linkFile(directory + std::string("/in.epw"), tstDirLast + std::string("/in.epw"));
+	// run full runperiod
+	status = RunEnergyPlus(tstDirFull);
+	clear_all_states();
+
+	if (!std::cin.good()) std::cin.clear();
+	if (!std::cerr.good()) std::cerr.clear();
+	if (!std::cout.good()) std::cout.clear();
+	std::cerr << "Standard error is still available for use" << std::endl;
+	std::cout << "Standard output is still available for use" << std::endl;
+	// run first half TODO
+	status = RunEnergyPlus(tstDirFirst);
+
+	if (!std::cin.good()) std::cin.clear();
+	if (!std::cerr.good()) std::cerr.clear();
+	if (!std::cout.good()) std::cout.clear();
+	std::cerr << "Standard error is still available for use" << std::endl;
+	std::cout << "Standard output is still available for use" << std::endl;
+	// run last half TODO
+	status = RunEnergyPlus(tstDirLast);
+
+	if (!std::cin.good()) std::cin.clear();
+	if (!std::cerr.good()) std::cerr.clear();
+	if (!std::cout.good()) std::cout.clear();
+	std::cerr << "Standard error is still available for use" << std::endl;
+	std::cout << "Standard output is still available for use" << std::endl;
+}
 
