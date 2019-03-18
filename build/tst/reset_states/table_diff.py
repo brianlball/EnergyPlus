@@ -41,7 +41,7 @@ import getopt
 import os.path
 
 from bs4 import BeautifulSoup, NavigableString, Tag
-from epregressions.diffs.thresh_dict import ThreshDict
+from thresh_dict import ThreshDict
 
 help_message = __doc__
 
