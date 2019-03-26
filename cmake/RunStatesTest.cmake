@@ -64,15 +64,23 @@
   message( "Passing run directory as ${TEST_DIR}/last" )
   execute_process(COMMAND ${ECHO_CMD} COMMAND "${TEST_EXE}" "${BINARY_DIR}/${TEST_DIR}/last")
   execute_process(COMMAND ${ECHO_CMD} COMMAND "${BINARY_DIR}/${TEST_DIR}/last/ReadVarsESO.exe" WORKING_DIRECTORY "${BINARY_DIR}/${TEST_DIR}/last")
+
   
-  # Clean up
-  #execute_process(COMMAND "${CMAKE_COMMAND}" -E remove "${BINARY_DIR}/${TEST_DIR}/full/Energy+.idd" "${BINARY_DIR}/${TEST_DIR}/last/in.epw")
+  #run python
+  message("${CMAKE_COMMAND} -E remove ${BINARY_DIR}/${TEST_DIR}/out1 ${BINARY_DIR}/${TEST_DIR}/out2 ${BINARY_DIR}/${TEST_DIR}/out3 ${BINARY_DIR}/${TEST_DIR}/out4")
   
+  execute_process(COMMAND "${CMAKE_COMMAND}" -E remove "${BINARY_DIR}/${TEST_DIR}/out1" "${BINARY_DIR}/${TEST_DIR}/out2" "${BINARY_DIR}/${TEST_DIR}/out3" "${BINARY_DIR}/${TEST_DIR}/out4")
+  find_package(PythonInterp 2.7 REQUIRED)
   
+  message("${PYTHON_EXECUTABLE} ${BINARY_DIR}/${TEST_DIR}/math_diff.py ${BINARY_DIR}/${TEST_DIR}/last/eplusout.csv ${BINARY_DIR}/${TEST_DIR}/first/eplusout.csv ${BINARY_DIR}/${TEST_DIR}/out1 ${BINARY_DIR}/${TEST_DIR}/out2 ${BINARY_DIR}/${TEST_DIR}/out3 ${BINARY_DIR}/${TEST_DIR}/out4")
+	
+  execute_process(COMMAND "${PYTHON_EXECUTABLE}" "${BINARY_DIR}/${TEST_DIR}/math_diff.py" "${BINARY_DIR}/${TEST_DIR}/last/eplusout.csv" "${BINARY_DIR}/${TEST_DIR}/first/eplusout.csv" "${BINARY_DIR}/${TEST_DIR}/out1" "${BINARY_DIR}/${TEST_DIR}/out2" "${BINARY_DIR}/${TEST_DIR}/out3" "${BINARY_DIR}/${TEST_DIR}/out4")
+
+  #execute_process(COMMAND \"${PYTHON_EXECUTABLE}\" \"${BINARY_DIR}/${TEST_DIR}/math_diff.py\" \"${BINARY_DIR}/${TEST_DIR}/last/eplusout.csv\" \"${BINARY_DIR}/${TEST_DIR}/first/eplusout.csv\")
   
   # Check the outputs and return appropriately
-  file(READ "${BINARY_DIR}/${TEST_DIR}/full/eplusout.end" FILE_CONTENT)
-  string(FIND "${FILE_CONTENT}" "EnergyPlus Completed Successfully" RESULT)
+  file(READ "${BINARY_DIR}/${TEST_DIR}/out4" FILE_CONTENT)
+  string(FIND "${FILE_CONTENT}" "All Equal" RESULT)
   if( RESULT EQUAL 0 )
     message("Test Passed")
   else()
