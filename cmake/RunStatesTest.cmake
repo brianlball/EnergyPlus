@@ -71,10 +71,10 @@
   
   execute_process(COMMAND "${CMAKE_COMMAND}" -E remove "${BINARY_DIR}/${TEST_DIR}/out1" "${BINARY_DIR}/${TEST_DIR}/out2" "${BINARY_DIR}/${TEST_DIR}/out3" "${BINARY_DIR}/${TEST_DIR}/out4")
   find_package(PythonInterp 2.7 REQUIRED)
-  
-  message("${PYTHON_EXECUTABLE} ${BINARY_DIR}/${TEST_DIR}/math_diff.py ${BINARY_DIR}/${TEST_DIR}/last/eplusout.csv ${BINARY_DIR}/${TEST_DIR}/first/eplusout.csv ${BINARY_DIR}/${TEST_DIR}/out1 ${BINARY_DIR}/${TEST_DIR}/out2 ${BINARY_DIR}/${TEST_DIR}/out3 ${BINARY_DIR}/${TEST_DIR}/out4")
-	
-  execute_process(COMMAND "${PYTHON_EXECUTABLE}" "${BINARY_DIR}/${TEST_DIR}/math_diff.py" "${BINARY_DIR}/${TEST_DIR}/last/eplusout.csv" "${BINARY_DIR}/${TEST_DIR}/first/eplusout.csv" "${BINARY_DIR}/${TEST_DIR}/out1" "${BINARY_DIR}/${TEST_DIR}/out2" "${BINARY_DIR}/${TEST_DIR}/out3" "${BINARY_DIR}/${TEST_DIR}/out4")
+
+  SET(PYTHON_ARGS "${BINARY_DIR}/${TEST_DIR}/math_diff.py" "${BINARY_DIR}/${TEST_DIR}/last/eplusout.csv" "${BINARY_DIR}/${TEST_DIR}/first/eplusout.csv" "${BINARY_DIR}/${TEST_DIR}/out1" "${BINARY_DIR}/${TEST_DIR}/out2" "${BINARY_DIR}/${TEST_DIR}/out3" "${BINARY_DIR}/${TEST_DIR}/out4")
+  message("${PYTHON_EXECUTABLE} ${PYTHON_ARGS}")
+  execute_process(COMMAND ${PYTHON_EXECUTABLE} ${PYTHON_ARGS})
 
   #execute_process(COMMAND \"${PYTHON_EXECUTABLE}\" \"${BINARY_DIR}/${TEST_DIR}/math_diff.py\" \"${BINARY_DIR}/${TEST_DIR}/last/eplusout.csv\" \"${BINARY_DIR}/${TEST_DIR}/first/eplusout.csv\")
   
