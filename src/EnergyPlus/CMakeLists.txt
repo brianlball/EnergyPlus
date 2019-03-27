@@ -714,7 +714,7 @@ if( BUILD_TESTING )
            COMMAND ${CMAKE_COMMAND}
            -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
            -DBINARY_DIR=${CMAKE_BINARY_DIR}
-           -DIDF_FILE=Minimal_lights.idf
+           -DIDF_FILE=Minimal_lights.idf.in
            -DEPW_FILE=USA_CO_Golden-NREL.724666_TMY3.epw
            -P ${CMAKE_SOURCE_DIR}/cmake/RunStatesTest.cmake)
 endif()
