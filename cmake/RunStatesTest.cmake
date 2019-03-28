@@ -33,7 +33,8 @@
   # Run First half of Year
   #TODO modify IDF to do that
       message("SimulationState: ${SimulationState}")
-	  set(SimulationState "SimulationStates,RUNPERIOD 1,save,stop,31,24,1;")
+	  #set(SimulationState "SimulationStates,RUNPERIOD 1,save,stop,31,24,1;")
+ 	  set(SimulationState "SimulationStates,RUNPERIOD 1,save,continue,31,24,1;")
 	  message("SimulationState: ${SimulationState}")
 	  configure_file("${SOURCE_DIR}/testfiles/BriansFiles/${IDF_FILE}" "${BINARY_DIR}/${TEST_DIR}/first/in.idf")
 	  message("SimulationState: ${SimulationState}")
