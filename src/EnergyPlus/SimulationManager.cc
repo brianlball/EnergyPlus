@@ -421,6 +421,51 @@ namespace SimulationManager {
 
         EnvCount = 0;
         state.dataGlobal->WarmupFlag = true;
+        //BLB
+        // get stop simulation values -blb
+        // need these variables
+        Array1D_string Alphas(6);
+        Array1D<Real64> Number(4);
+        int NumAlpha;
+        int NumNumber;
+        int IOStat;
+        int NumDebugOut;
+        int MinInt;
+        int Num;
+
+        // Simulation States
+        bool loadCheck(true);   //use this to check and set load conditions only once
+        std::string StopEnv("");
+        std::string StatesSave("");
+        std::string StatesStop("");
+        int StopDay(9999);
+        int StopHour(9999);
+        int StopTime(9999);
+        // look for SimulationStates object in idf
+        std::string CurrentModuleObject = "SimulationStates";
+        Num = state.dataInputProcessing->inputProcessor->getNumObjectsFound(state, CurrentModuleObject);
+        if (Num == 1) {
+            state.dataInputProcessing->inputProcessor->getObjectItem(state,
+                CurrentModuleObject,
+                1,
+                Alphas,
+                NumAlpha,
+                Number,
+                NumNumber,
+                IOStat,
+                state.dataIPShortCut->lNumericFieldBlanks,
+                state.dataIPShortCut->lAlphaFieldBlanks,
+                state.dataIPShortCut->cAlphaFieldNames,
+                state.dataIPShortCut->cNumericFieldNames);
+            StopEnv = Alphas(1);
+            StatesSave = Alphas(2);
+            StatesStop = Alphas(3);
+            StopDay = Number(1);
+            StopHour = Number(2);
+            StopTime = Number(3);
+            DisplayString(state, "Will " + StatesSave + " Simuation at day: " + std::to_string(StopDay) + " hour: " + std::to_string(StopHour) +
+                " time: " + std::to_string(StopTime) + " during: " + StopEnv + " and will " + StatesStop + " the simulation.");
+        }
 
         while (Available) {
             if (state.dataGlobal->stopSimulation) break;
@@ -527,6 +572,37 @@ namespace SimulationManager {
                 }
 
                 for (state.dataGlobal->HourOfDay = 1; state.dataGlobal->HourOfDay <= 24; ++state.dataGlobal->HourOfDay) { // Begin hour loop ...
+                    //BLB                                                                                                      // check for save_all_states conditions -blb
+                    if (StatesSave == "SAVE") {
+                        if ((state.dataEnvrn->EnvironmentName == StopEnv) && (!state.dataGlobal->WarmupFlag) && (state.dataGlobal->DayOfSim == StopDay) && (state.dataGlobal->HourOfDay == StopHour) &&
+                            (state.dataGlobal->TimeStep == StopTime)) {
+                            DisplayString(state, StatesSave + "ing Simuation at day: " + std::to_string(StopDay) + " hour: " + std::to_string(StopHour) +
+                                " time: " + std::to_string(StopTime) + " during: " + StopEnv + " and will " + StatesStop +
+                                " the simulation.");
+                            //save the states
+                            //save_all_states();  //-blb make new method?
+                            //determine stop/continue status
+                            if (StatesStop == "STOP") {
+                                // exit without calling reporting
+                                // return;
+
+                                // set counters to end values to use the exisiting reporting functions
+                                state.dataGlobal->DayOfSim = state.dataGlobal->NumOfDayInEnvrn;
+                                state.dataGlobal->HourOfDay = 24;
+                                state.dataGlobal->TimeStep = state.dataGlobal->NumOfTimeStepInHour;
+                                state.dataGlobal->EndHourFlag = true;
+                                state.dataGlobal->EndDayFlag = true;
+                                state.dataGlobal->EndEnvrnFlag = true;
+                                break;
+                            }
+                        }
+                    } else if ((state.dataEnvrn->EnvironmentName == StopEnv) && (!state.dataGlobal->WarmupFlag) && loadCheck && (StatesSave == "LOAD")) {
+                        loadCheck = false; //set to false so we only load once
+                                           //load the states
+                        //load_all_states();  //-blb make new method?
+                        //any other load checks or sets?
+                    }
+
                     if (state.dataGlobal->stopSimulation) break;
 
                     state.dataGlobal->BeginHourFlag = true;
@@ -660,6 +736,20 @@ namespace SimulationManager {
             ShowFatalError(state, "Error condition occurred.  Previous Severe Errors cause termination.");
         }
     }
+    //BLB
+    //void save_all_states()
+    //{
+    //   ExteriorEnergyUse::save_state();
+    //    ScheduleManager::save_state();
+    //    DataGlobals::save_state();
+    //    // OutputReportTabular::ResetTabularReports();
+    //}
+
+    //void load_all_states()
+    //{
+    //    DataGlobals::load_states();
+    //    ExteriorEnergyUse::load_states(); // test load function
+    //}
 
     void GetProjectData(EnergyPlusData &state)
     {

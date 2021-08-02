@@ -454,6 +454,37 @@ SimulationControl,
       \minimum 1
       \default 1
 
+SimulationStates,
+      \unique-object
+      \min-fields 4
+  A1, \field Envoironment to Stop
+      \type choice
+      \retaincase
+	  \key RUNPERIOD 1
+      \default RUNPERIOD 1
+  A2, \field Save or Load States
+      \type choice
+	  \key save
+	  \key load
+      \default save
+  A3, \field Continue or Stop
+      \type choice
+	  \key continue
+	  \key stop
+      \default stop	  
+  N1, \field Stop Day
+      \type integer
+      \minimum 1
+      \default 9999
+  N2, \field Stop Hour
+      \type integer
+      \minimum 1
+      \default 9999
+  N3; \field Stop Time
+      \type integer
+      \minimum 1
+      \default 9999
+
 PerformancePrecisionTradeoffs,
       \unique-object
       \memo This object enables users to choose certain options that speed up EnergyPlus simulation,
